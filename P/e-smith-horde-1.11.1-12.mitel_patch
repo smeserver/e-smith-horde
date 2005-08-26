@@ -1,0 +1,2045 @@
+Index: e-smith-horde/createlinks
+diff -u e-smith-horde/createlinks:1.11 e-smith-horde/createlinks:1.12
+--- e-smith-horde/createlinks:1.11	Tue Apr 19 15:54:12 2005
++++ e-smith-horde/createlinks	Tue Jun 14 17:20:22 2005
+@@ -4,7 +4,7 @@
+ 
+ # conf-horde
+ 
+-foreach (qw(conf.php))
++foreach (qw(conf.php prefs.php registry.php mime_drivers.php))
+ {
+     templates2events("/home/httpd/html/horde/config/$_", qw(
+ 	    bootstrap-console-save
+Index: e-smith-horde/e-smith-horde.spec
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,38 @@
++// 00header
++/**
++ * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.4 2005/03/14 13:48:05 jan Exp $
++ *
++ * Decide which output drivers you want to activate for all Horde
++ * applications. Individual Horde applications can override these settings
++ * in their config/mime_drivers.php files.
++ *
++ * The available drivers are:
++ * --------------------------
++ * css            CSS Styles
++ * deb            Debian packages
++ * enriched       Enriched text format
++ * enscript       GNU enscript
++ * html           HTML data
++ * images         Image files
++ * msword         Microsoft Word files via wvHtml
++ * msexcel        Microsoft Excel files via xlhtml
++ * mspowerpoint   Microsoft Powerpoint files via ppthtml
++ * ooo            OpenOffice.org/StarOffice Documents
++ * pdf            Portable Document Format (PDF) files
++ * php            The internal PHP4 syntax highlighting engine
++ * plain          Return text, with links made clickable and other HTML
++ *                filtered out
++ * rar            RAR archives
++ * report         Report messages (RFC 3452)
++ * rfc822         Digested messages (RFC 2046 [5.2.1])
++ * richtext       Richtext text format (RFC 1341 [7.1.3])
++ * rpm            RPM packages
++ * security       Secure multiparts (RFC 1847)
++ * simple         Output text without modification
++ * srchighlite    Source Highlight
++ * tgz            Tarballs, including gzipped ones
++ * tnef           MS-TNEF attachments
++ * vcard          vCards
++ * webcpp         Web C Plus Plus
++ * zip            Zip files
++ */
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,16 @@
++// 100mimedrivers
++$mime_drivers_map['horde']['registered'] = array(
++    'css', 'deb', 'enriched', 'enscript', 'html', 'images', 'msword',
++    'msexcel', 'mspowerpoint', 'ooo', 'pdf', 'php', 'plain', 'rar', 'report',
++    'rfc822', 'richtext', 'rpm', 'security', 'simple', 'srchighlite', 'tgz',
++    'tnef', 'vcard', 'webcpp', 'zip');
++
++
++/**
++ * If you want to specifically override any MIME type to be handled by
++ * a specific driver, then enter it here.  Normally, this is safe to
++ * leave, but it's useful when multiple drivers handle the same MIME
++ * type, and you want to specify exactly which one should handle it.
++ */
++$mime_drivers_map['horde']['overrides'] = array();
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/110defaultdrivers
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/110defaultdrivers:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/110defaultdrivers	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,35 @@
++// 110defaultdrivers
++/**
++ * Driver specific settings. Here, you have to configure each driver
++ * which you chose to activate above. Default settings have been
++ * filled in for them, and if you haven't activated it, then just
++ * leave it as it is - it won't get loaded.
++ *
++ * The 'handles' setting below shouldn't be changed in most
++ * circumstances. It registers a set of MIME type that the driver can
++ * handle. The 'x-extension' MIME type is a special one to Horde that
++ * maps a file extension to a MIME type. It's useful when you know
++ * that all files ending in '.c' are C files, for example. You can set
++ * the MIME subtype to '*' to match all possible subtypes
++ * (i.e. 'image/*').
++ *
++ * The 'icons' entry is for the driver to register various icons for
++ * the MIME types it handles. The array consists of a 'default' icon
++ * for that driver, and can also include specific MIME-types which can
++ * have their own icons. You can set the MIME subtype to '*' to match
++ * all possible subtypes (i.e. 'image/*').
++ */
++
++/**
++ * Default driver settings
++ */
++$mime_drivers['horde']['default']['icons'] = array(
++    'default'                       => 'text.png',
++    'audio/*'                       => 'audio.png',
++    'message/*'                     => 'mail.png',
++    'unknown/*'                     => 'binary.png',
++    'video/*'                       => 'video.png',
++    'application/pgp-signature'     => 'encryption.png',
++    'application/x-pkcs7-signature' => 'encryption.png',
++    'application/octet-stream'      => 'binary.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,9 @@
++// 120simple
++/**
++ * Default text driver settings
++ */
++$mime_drivers['horde']['simple']['handles'] = array(
++    'text/*');
++$mime_drivers['horde']['simple']['icons'] = array(
++    'default' => 'text.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,9 @@
++// 130plain
++/**
++ * Plain text driver settings
++ */
++$mime_drivers['horde']['plain']['handles'] = array(
++    'text/plain');
++$mime_drivers['horde']['plain']['icons'] = array(
++    'default' => 'text.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/140php
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/140php:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/140php	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,12 @@
++// 140php
++/**
++ * PHP driver settings
++ */
++$mime_drivers['horde']['php']['inline'] = true;
++$mime_drivers['horde']['php']['handles'] = array(
++    'application/x-php', 'x-extension/phps',
++    'x-extension/php3s', 'application/x-httpd-php',
++    'application/x-httpd-php3', 'application/x-httpd-phps');
++$mime_drivers['horde']['php']['icons'] = array(
++    'default' => 'php.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/150css
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/150css:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/150css	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 150css
++/**
++ * CSS driver settings
++ */
++$mime_drivers['horde']['css']['inline'] = true;
++$mime_drivers['horde']['css']['handles'] = array(
++    'text/css', 'x-extension/css');
++$mime_drivers['horde']['css']['icons'] = array(
++    'default' => 'html.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/160html
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/160html:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/160html	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 160html
++/**
++ * HTML driver settings
++ */
++$mime_drivers['horde']['html']['inline'] = false;
++$mime_drivers['horde']['html']['handles'] = array(
++    'text/html');
++$mime_drivers['horde']['html']['icons'] = array(
++    'default' => 'html.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/170enriched
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/170enriched:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/170enriched	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 170enriched
++/**
++ * Enriched text driver settings
++ */
++$mime_drivers['horde']['enriched']['inline'] = true;
++$mime_drivers['horde']['enriched']['handles'] = array(
++    'text/enriched');
++$mime_drivers['horde']['enriched']['icons'] = array(
++    'default' => 'text.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/180richtext
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/180richtext:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/180richtext	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 180richtext
++/**
++ * Richtext text driver settings
++ */
++$mime_drivers['horde']['richtext']['inline'] = true;
++$mime_drivers['horde']['richtext']['handles'] = array(
++    'text/richtext');
++$mime_drivers['horde']['richtext']['icons'] = array(
++    'default' => 'text.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/190webcpp
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/190webcpp:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/190webcpp	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,28 @@
++// 190webcpp
++/**
++ * Web C Plus Plus driver settings
++ * http://webcpp.sourceforge.net/
++ */
++$mime_drivers['horde']['webcpp']['location'] = '/usr/bin/webcpp';
++$mime_drivers['horde']['webcpp']['inline'] = true;
++$mime_drivers['horde']['webcpp']['handles'] = array(
++    'text/xml', 'text/sgml', 'application/xml',
++    'application/x-sh', 'application/x-javascript', 'application/x-tcl',
++    'x-extension/asm', 'application/x-asp', 'x-extension/bas',
++    'x-extension/cs', 'text/x-csrc', 'x-extension/rc',
++    'text/x-c++src', 'text/x-c++src', 'text/x-c++src',
++    'text/x-chdr', 'x-extension/bat', 'text/x-fortran',
++    'x-extension/f77', 'x-extension/f90', 'x-extension/for',
++    'x-extension/ftn', 'text/x-java', 'application/x-javascript',
++    'text/sgml', 'text/xml', 'text/x-pascal',
++    'application/x-cgi', 'application/x-perl', 'application/x-python',
++    'text/x-sql', 'text/x-tcl',
++    'application/x-shellscript', 'x-extension/vhd', 'x-extension/vhdl');
++$mime_drivers['horde']['webcpp']['icons'] = array(
++    'default'                  => 'text.png',
++    'text/xml'                 => 'xml.png',
++    'text/x-csrc'              => 'source-c.png',
++    'text/x-chdr'              => 'source-h.png',
++    'text/x-java'              => 'source-java.png',
++    'application/x-javascript' => 'script-js.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/200srchighlite
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/200srchighlite:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/200srchighlite	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,18 @@
++// 200srchighlite
++/**
++ * Source-Highlight driver settings
++ * http://www.gnu.org/software/src-highlite/
++ */
++$mime_drivers['horde']['srchighlite']['location'] = '/usr/bin/source-highlight';
++$mime_drivers['horde']['srchighlite']['inline'] = true;
++$mime_drivers['horde']['srchighlite']['handles'] = array(
++    'text/x-csrc', 'text/x-c++src', 'text/x-java',
++    'application/x-perl', 'application/x-python', 'text/x-c++src',
++    'text/cpp');
++$mime_drivers['horde']['srchighlite']['icons'] = array(
++    'default'                  => 'text.png',
++    'text/x-csrc'              => 'source-c.png',
++    'text/x-c++src'            => 'source-c.png',
++    'text/cpp'                 => 'source-c.png',
++    'text/x-java'              => 'source-java.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/210enscript
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/210enscript:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/210enscript	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,22 @@
++// 210enscript
++/**
++ * GNU Enscript driver settings
++ */
++$mime_drivers['horde']['enscript']['location'] = '/usr/bin/enscript';
++$mime_drivers['horde']['enscript']['inline'] = true;
++$mime_drivers['horde']['enscript']['handles'] = array(
++    'application/x-cgi', 'application/x-shellscript', 'application/x-javascript',
++    'application/x-perl', 'application/xml', 'text/xml',
++    'text/diff', 'text/x-diff', 'text/x-patch', 'text/x-csrc',
++    'x-extension/cs', 'text/x-java', 'text/x-chdr', 'text/x-c++src',
++    'text/x-c++hdr', 'x-extension/vhd', 'x-extension/vhdl', 'text/x-sql',
++    'x-extension/vb', 'x-extension/vba', 'text/x-emacs-lisp');
++$mime_drivers['horde']['enscript']['icons'] = array(
++    'default'                  => 'text.png',
++    'text/xml'                 => 'xml.png',
++    'application/xml'          => 'xml.png',
++    'text/x-csrc'              => 'source-c.png',
++    'text/x-chdr'              => 'source-h.png',
++    'text/x-java'              => 'source-java.png',
++    'application/x-javascript' => 'script-js.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/220tar
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/220tar:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/220tar	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,18 @@
++// 220tar
++/**
++ * Tar driver settings
++ * To access gzipped files, the zlib library must have been built into PHP
++ * (with the --with-zlib option).
++ */
++$mime_drivers['horde']['tgz']['inline'] = true;
++$mime_drivers['horde']['tgz']['handles'] = array(
++    'application/x-compressed-tar',
++    'application/x-tar',
++    'application/x-tgz',
++    'application/x-gzip',
++    'application/x-gtar',
++    'application/gzip',
++    'application/x-gzip-compressed');
++$mime_drivers['horde']['tgz']['icons'] = array(
++    'default' => 'compressed.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/230zip
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/230zip:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/230zip	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,12 @@
++//230zip
++/**
++ * Zip file driver settings
++ */
++$mime_drivers['horde']['zip']['inline'] = true;
++$mime_drivers['horde']['zip']['handles'] = array(
++    'application/zip',
++    'application/x-compressed',
++    'application/x-zip-compressed');
++$mime_drivers['horde']['zip']['icons'] = array(
++    'default' => 'compressed.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/240rar
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/240rar:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/240rar	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,11 @@
++//240rar
++/**
++ * RAR archive driver settings
++ */
++$mime_drivers['horde']['rar']['inline'] = true;
++$mime_drivers['horde']['rar']['handles'] = array(
++    'application/x-rar',
++    'application/x-rar-compressed');
++$mime_drivers['horde']['rar']['icons'] = array(
++    'default' => 'compressed.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,19 @@
++// 250msword
++/**
++ * MS Word driver settings
++ * This driver requires wvWare to be installed.
++ * wvWare homepage: http://wvware.sourceforge.net/
++ *
++ * The 'location' entry should point to the 'wvHtml' program, NOT the
++ * 'wvWare' program.
++ */
++$mime_drivers['horde']['msword']['location'] = '/usr/bin/wvHtml';
++$mime_drivers['horde']['msword']['inline'] = false;
++$mime_drivers['horde']['msword']['handles'] = array(
++    'application/vnd.ms-word',
++    'application/msword',
++    'application/rtf',
++    'text/rtf');
++$mime_drivers['horde']['msword']['icons'] = array(
++    'default' => 'msword.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,15 @@
++// 260msexcel
++/**
++ * MS Excel driver settings
++ * This driver requires xlhtml to be installed.
++ * xlhtml homepage: http://chicago.sourceforge.net/xlhtml/
++ */
++$mime_drivers['horde']['msexcel']['location'] = '/usr/local/bin/xlhtml';
++$mime_drivers['horde']['msexcel']['inline'] = false;
++$mime_drivers['horde']['msexcel']['handles'] = array(
++    'application/vnd.ms-excel',
++    'application/msexcel',
++    'application/x-msexcel');
++$mime_drivers['horde']['msexcel']['icons'] = array(
++    'default' => 'msexcel.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,14 @@
++// 270mspowerpoint
++/**
++ * MS Powerpoint driver settings
++ * This driver requires ppthtml, included with xlhtml, to be installed.
++ * xlhtml homepage: http://chicago.sourceforge.net/xlhtml/
++ */
++$mime_drivers['horde']['mspowerpoint']['location'] = '/usr/local/bin/ppthtml';
++$mime_drivers['horde']['mspowerpoint']['inline'] = false;
++$mime_drivers['horde']['mspowerpoint']['handles'] = array(
++    'application/vnd.ms-powerpoint',
++    'application/mspowerpoint');
++$mime_drivers['horde']['mspowerpoint']['icons'] = array(
++    'default' => 'mspowerpoint.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 280vcard
++/**
++ * vCard driver settings
++ */
++$mime_drivers['horde']['vcard']['handles'] = array(
++    'text/x-vcard',
++    'text/x-vcalendar');
++$mime_drivers['horde']['vcard']['icons'] = array(
++    'default' => 'vcard.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/290rpm
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/290rpm:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/290rpm	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,11 @@
++// 290rpm
++/**
++ * RPM driver settings
++ */
++$mime_drivers['horde']['rpm']['location'] = '/usr/bin/rpm';
++$mime_drivers['horde']['rpm']['inline'] = false;
++$mime_drivers['horde']['rpm']['handles'] = array(
++    'application/x-rpm');
++$mime_drivers['horde']['rpm']['icons'] = array(
++    'default' => 'rpm.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/300debian
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/300debian:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/300debian	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,12 @@
++// 300debian
++/**
++ * Debian package driver settings
++ */
++$mime_drivers['horde']['deb']['location'] = '/usr/bin/dpkg';
++$mime_drivers['horde']['deb']['inline'] = false;
++$mime_drivers['horde']['deb']['handles'] = array(
++    'application/x-deb',
++    'application/x-debian-package');
++$mime_drivers['horde']['deb']['icons'] = array(
++    'default' => 'deb.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/310security
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/310security:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/310security	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 310security
++/**
++ * Secure multiparts (RFC 1847)
++ */
++$mime_drivers['horde']['security']['inline'] = true;
++$mime_drivers['horde']['security']['handles'] = array(
++    'multipart/encrypted', 'multipart/signed');
++$mime_drivers['horde']['security']['icons'] = array(
++    'default' => 'encryption.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/320images
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/320images:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/320images	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 320images
++/**
++ * Image settings
++ */
++$mime_drivers['horde']['images']['inline'] = false;
++$mime_drivers['horde']['images']['handles'] = array(
++    'image/*');
++$mime_drivers['horde']['images']['icons'] = array(
++    'default' => 'image.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/330tnef
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/330tnef:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/330tnef	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 330tnef
++/**
++ * MS-TNEF Attachment (application/ms-tnef) settings
++ */
++$mime_drivers['horde']['tnef']['inline'] = false;
++$mime_drivers['horde']['tnef']['handles'] = array(
++    'application/ms-tnef');
++$mime_drivers['horde']['tnef']['icons'] = array(
++    'default' => 'text.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/340rfc822
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/340rfc822:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/340rfc822	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,11 @@
++// 340rfc822
++/**
++ * Digest message (RFC 2046 [5.2.1]) settings
++ */
++$mime_drivers['horde']['rfc822']['inline'] = false;
++$mime_drivers['horde']['rfc822']['handles'] = array(
++    'message/rfc822',
++    'x-extension/eml');
++$mime_drivers['horde']['rfc822']['icons'] = array(
++    'default' => 'mail.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/350report
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/350report:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/350report	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 350report
++/**
++ * Report messages (RFC 3452)
++ */
++$mime_drivers['horde']['report']['inline'] = true;
++$mime_drivers['horde']['report']['handles'] = array(
++    'multipart/report');
++$mime_drivers['horde']['report']['icons'] = array(
++    'default' => 'mail.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/360ooo
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/360ooo:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/360ooo	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,39 @@
++// 360ooo
++/**
++ * OpenOffice.org/StarOffice settings
++ */
++$mime_drivers['horde']['ooo']['inline'] = false;
++$mime_drivers['horde']['ooo']['handles'] = array(
++    'application/vnd.sun.xml.calc',
++    'application/vnd.sun.xml.calc.template',
++    'application/vnd.sun.xml.draw',
++    'application/vnd.sun.xml.draw.template',
++    'application/vnd.sun.xml.impress',
++    'application/vnd.sun.xml.impress.template',
++    'application/vnd.sun.xml.math',
++    'application/vnd.sun.xml.writer',
++    'application/vnd.sun.xml.writer.global',
++    'application/vnd.sun.xml.writer.template',
++    'application/vnd.stardivision.calc',
++    'application/vnd.stardivision.draw',
++    'application/vnd.stardivision.impress',
++    'application/vnd.stardivision.math',
++    'application/vnd.stardivision.writer');
++$mime_drivers['horde']['ooo']['icons'] = array(
++    'default' => 'ooo_calc.png',
++    'application/vnd.sun.xml.calc'             => 'ooo_calc.png',
++    'application/vnd.stardivision.calc'        => 'ooo_calc.png',
++    'application/vnd.sun.xml.calc.template'    => 'ooo_calc.png',
++    'application/vnd.sun.xml.draw'             => 'ooo_draw.png',
++    'application/vnd.stardivision.draw'        => 'ooo_draw.png',
++    'application/vnd.sun.xml.draw.template'    => 'ooo_draw.png',
++    'application/vnd.sun.xml.impress'          => 'ooo_impress.png',
++    'application/vnd.stardivision.impress'     => 'ooo_impress.png',
++    'application/vnd.sun.xml.impress.template' => 'ooo_impress.png',
++    'application/vnd.sun.xml.math'             => 'ooo_math.png',
++    'application/vnd.stardivision.math'        => 'ooo_math.png',
++    'application/vnd.sun.xml.writer'           => 'ooo_writer.png',
++    'application/vnd.stardivision.writer'      => 'ooo_writer.png',
++    'application/vnd.sun.xml.writer.global'    => 'ooo_writer.png',
++    'application/vnd.sun.xml.writer.template'  => 'ooo_writer.png');
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/370pdf
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/370pdf:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/370pdf	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,10 @@
++// 370pdf
++/**
++ * Portable Document Format (PDF) files
++ * YOU SHOULD NOT NORMALLY ALTER THIS SETTING.
++ */
++$mime_drivers['horde']['pdf']['inline'] = false;
++$mime_drivers['horde']['pdf']['handles'] = array(
++    'application/pdf');
++$mime_drivers['horde']['pdf']['icons'] = array(
++    'default' => 'pdf.png');
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,62 @@
++//00header
++/**
++ * $Horde: horde/config/prefs.php.dist,v 1.85.2.2 2005/03/17 10:41:54 jan Exp $
++ *
++ * Preferences Information
++ * =======================
++ * Changes you make to the prefs.php file(s) will not be reflected until the
++ * user logs out and logs in again.
++ *
++ * If you change these preferences in a production system, you will
++ * need to delete any horde_prefs in your preferences database.
++ *
++ * prefGroups array
++ * ----------------
++ * $prefGroups are for display purposes when you press the options button.
++ * The options choice will appear when you set your preferences driver
++ * in the horde/config/conf.php file.
++ *
++ * $prefGroups array definition:
++ *    column:  What column head this group will go under
++ *     label:  Label for the group of settings
++ *      desc:  Description that will show under label
++ *   members:  List of preferences supported by this group
++ *
++ * _prefs array
++ * ------------
++ * The $_prefs array's are listed in the same order as listed in the
++ * members element of $prefGroups.
++ *
++ *  value: This entry will either hold a number or a text value based on the
++ *         preference type:
++ *           implicit:  See Preference type
++ *               text:  Text value
++ *             number:  Number value
++ *           checkbox:  Value should be 0 for unchecked, 1 for checked
++ *             select:  Value associated with that selection list
++ *
++ * locked: Allow preference to be changed from UI
++ *            true:  Do not show this preference in the UI
++ *           false:  Show this preference in the UI and allow changing
++ *
++ * shared: Share with other horde apps
++ *            true:  Share this pref with other Horde apps
++ *           false:  Keep this pref local to IMP
++ *
++ *   type: Preference type
++ *            special:  Provides a UI widget
++ *             select:  Provides a selection list in the UI
++ *           checkbox:  Provides a checkbox
++ *           implicit:  Provides storage for 'special' types
++ *           password:  Provides a textbox for password entry.
++ *               enum:  Use static list of elements...similar to 'select'
++ *
++ *   enum: Static list of elements.
++ *
++ *   hook: Call a hook function for the value of this preference
++ *            true:  Will call the function _prefs_hook_<prefname>
++ *                   to fill in the value of this preference.
++ *                   See hooks.php for more details.
++ *           false:  Normal behaviour - no hook is called.
++ */
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/100prefgroups
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/100prefgroups:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/100prefgroups	Tue Jun 14 17:20:22 2005
+@@ -0,0 +1,76 @@
++// 100prefgroups
++$prefGroups['identities'] = array(
++    'column' => _("Your Information"),
++    'label' => _("Personal Information"),
++    'desc' => _("Change the name and address that people see when they read and reply to your emails."),
++    'members' => array('default_identity', 'identityselect', 'deleteidentity',
++                       'id', 'fullname', 'from_addr')
++);
++
++$auth = &Auth::singleton($GLOBALS['conf']['auth']['driver']);
++if (is_a($auth, 'Auth') && $auth->hasCapability('update')) \{
++    $prefGroups['forgotpass'] = array(
++        'column' => _("Your Information"),
++        'label' => _("Account Password"),
++        'desc' => _("Set options to allow you to reset your password if you ever forget it."),
++        'members' => array('security_question', 'security_answer', 'alternate_email')
++    );
++\}
++
++$prefGroups['language'] = array(
++    'column' => _("Your Information"),
++    'label' => _("Locale and Time"),
++    'desc' => _("Set your preferred language, timezone and date options."),
++    'members' => array('language', 'timezone', 'twentyFour', 'date_format')
++);
++
++$prefGroups['categories'] = array(
++    'column' => _("Your Information"),
++    'label' => _("Categories and Labels"),
++    'desc' => _("Manage the list of categories you have to label items with, and colors associated with those categories."),
++    'members' => array('categorymanagement')
++);
++
++$prefGroups['display'] = array(
++    'column' => _("Other Information"),
++    'label' => _("Display Options"),
++    'desc' => _("Set your startup application, color scheme, page refreshing, and other display options."),
++    'members' => array('initial_application', 'show_last_login', 'theme',
++                       'summary_refresh_time', 'show_sidebar', 'sidebar_width',
++                       'moz_sidebar', 'menu_view', 'menu_refresh_time',
++                       'widget_accesskey', 'alpha_filter')
++);
++
++$prefGroups['logintasks'] = array(
++    'column' => _("Other Information"),
++    'label' => _("Login Tasks"),
++    'desc' => sprintf(_("Customize tasks to run upon logon to %s."), $GLOBALS['registry']->get('name')),
++    'members' => array('do_maintenance', 'confirm_maintenance')
++);
++
++$prefGroups['remote'] = array(
++    'column' => _("Other Information"),
++    'label' => _("Remote Servers"),
++    'desc' => _("Set up remote servers that you want to access from your portal."),
++    'url' => 'services/portal/rpcsum.php'
++);
++
++// For alternate IMSP authentication.
++$prefGroups['imspauth'] = array(
++    'column' => _("Other Information"),
++    'label' => _("Alternate IMSP Login"),
++    'desc' => _("Use if name/password is different for IMSP server."),
++    'members' => array('imsp_auth_user', 'imsp_auth_pass')
++);
++
++// Determine functionality of richtext editor
++$prefGroups['richtext'] = array(
++    'column' => _("Other Information"),
++    'label' => _("Rich Text Editor Options"),
++    'desc' => _("Which plugins to enable for the Rich Text editor."),
++    'members' => array('contextmenu', 'tableoperations', 'listtype'),
++);
++if ($registry->hasInterface('images')) \{
++    $prefGroups['richtext']['members'][] = 'anselimage';
++\}
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,247 @@
++// 200personal
++// Personal Information preferences
++
++// default identity
++// Set locked to true if you don't want the users to have multiple identities.
++$_prefs['default_identity'] = array(
++    'value' => 0,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'enum',
++    'enum' => (isset($identity) && is_object($identity)) ? $identity->getAll('id') : array(),
++    'desc' => _("Your default identity:")
++);
++
++// identities array
++// Don't change anything here.
++$_prefs['identities'] = array(
++    'value' => 'a:0:\{\}',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'implicit'
++);
++
++// identity selection widget
++$_prefs['identityselect'] = array(
++    'shared' => true,
++    'type' => 'special'
++);
++
++// delete button
++$_prefs['deleteidentity'] = array(
++    'type' => 'special',
++    'shared' => true
++);
++
++// identity name
++// If you lock this preference, you must specify a value or a hook for it in
++// horde/config/hooks.php.
++$_prefs['id'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'text',
++    'desc' => _("Identity's name:")
++);
++
++// user full name for From: line
++// If you lock this preference, you must specify a value or a hook for it in
++// horde/config/hooks.php.
++$_prefs['fullname'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'text',
++    'desc' => _("Your full name:")
++);
++
++// user preferred email address for From: line
++// If you lock this preference, you must specify a value or a hook for it in
++// horde/config/hooks.php.
++$_prefs['from_addr'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'text',
++    'desc' =>  _("Your From: address:")
++);
++
++// user security question
++$_prefs['security_question'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'text',
++    'desc' => _("Enter a security question which you will be asked if you need to reset your password, e.g. 'what is the name of your pet?':")
++);
++
++// user security answer
++$_prefs['security_answer'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'text',
++    'desc' => _("Insert the required answer to the security question:")
++);
++
++// user alternate email
++$_prefs['alternate_email'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'text',
++    'desc' => _("Insert an email address to which you can receive the new password:")
++);
++
++// user language
++$_prefs['language'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'select',
++    'desc' => _("Select your preferred language:")
++);
++
++// user time zone
++$_prefs['timezone'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'select',
++    'desc' => _("Your current time zone:")
++);
++
++// time format
++$_prefs['twentyFour'] = array(
++    'value' => false,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Display 24-hour times?")
++);
++
++// date format
++$_prefs['date_format'] = array(
++    'value' => '%x',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'enum',
++    'enum' => array(
++        '%x' => strftime('%x'),
++        '%Y-%m-%d' => strftime('%Y-%m-%d'),
++        '%A %B %d, %Y' => strftime('%A %B %d, %Y'),
++        '%A, %d. %B %Y' => strftime('%A, %d. %B %Y'),
++        '%A, %d %B %Y' => strftime('%A, %d %B %Y'),
++        '%a, %b %e, %Y' => strftime('%a, %b %e, %Y'),
++        '%a, %b %e, %y' => strftime('%a, %b %e, %y'),
++        '%a, %b %e' => strftime('%a, %b %e'),
++        '%a, %e %b %Y' => strftime('%a, %e %b %Y'),
++        '%a, %e %b %y' => strftime('%a, %e %b %y'),
++        '%a %d %b %Y' => strftime ('%a %d %b %Y'),
++        '%a %x' => strftime ('%a %x'),
++        '%a %Y-%m-%d' => strftime ('%a %Y-%m-%d'),
++        '%e %b %Y' => strftime('%e %b %Y'),
++        '%e. %b %Y' => strftime('%e. %b %Y'),
++        '%e. %m %Y' => strftime('%e %m %Y'),
++        '%e. %m.' => strftime('%e. %m.'),
++        '%e. %B' => strftime('%e. %B'),
++        '%e. %B %Y' => strftime('%e. %B %Y'),
++        '%e. %B %y' => strftime('%e. %B %y'),
++        '%B %e, %Y' => strftime('%B %e, %Y'),
++    ),
++    'desc' => _("Choose how to display dates:"));
++
++// UI theme
++$_prefs['theme'] = array(
++    'value' => 'bluewhite',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'select',
++    'desc' => _("Select your color scheme.")
++);
++
++// categories
++$_prefs['categories'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'implicit'
++);
++
++// category colors
++$_prefs['category_colors'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'implicit'
++);
++
++// UI for category management.
++$_prefs['categorymanagement'] = array(
++    'type' => 'special'
++);
++
++$_prefs['summary_refresh_time'] = array(
++    'value' => 300,
++    'locked' => false,
++    'shared' => false,
++    'type' => 'enum',
++    'enum' => array(0 => _("Never"),
++                    30 => _("Every 30 seconds"),
++                    60 => _("Every minute"),
++                    300 => _("Every 5 minutes"),
++                    900 => _("Every 15 minutes"),
++                    1800 => _("Every half hour")),
++    'desc' => _("Refresh Portal View:")
++);
++
++$_prefs['show_sidebar'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => sprintf(_("Show the %s Menu on the left?"), $GLOBALS['registry']->get('name', 'horde'))
++);
++
++$_prefs['sidebar_width'] = array(
++    'value' => 150,
++    'locked' => false,
++    'shared' => false,
++    'type' => 'number',
++    'desc' => sprintf(_("Width of the %s menu on the left (takes effect on next log-in):"), $GLOBALS['registry']->get('name', 'horde'))
++);
++
++$_prefs['moz_sidebar'] = array(
++    'type' => 'link',
++    'xurl' => sprintf('javascript:if (window.sidebar && window.sidebar.addPanel) window.sidebar.addPanel(\'%s\', \'%s\', \'%s\'); else alert(\'%s\');',
++                      $GLOBALS['registry']->get('name', 'horde'),
++                      Util::addParameter(Horde::url($GLOBALS['registry']->get('webroot', 'horde') . '/services/portal/sidebar.php', true, -1), 'mozbar', '1'),
++                      Horde::url($GLOBALS['registry']->get('webroot', 'horde') . '/prefs.php', true, -1),
++                      addslashes(_("Couldn't find the Mozilla Sidebar. Make sure the sidebar is open."))),
++    'desc' => sprintf(_("Add the %s Menu as a Mozilla Sidebar"), $GLOBALS['registry']->get('name', 'horde'))
++);
++
++$_prefs['menu_view'] = array(
++    'value' => 'both',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'enum',
++    'enum' => array('text' => _("Text Only"),
++                    'icon' => _("Icons Only"),
++                    'both' => _("Icons with text")),
++    'desc' => _("Menu mode:")
++);
++
++$_prefs['menu_refresh_time'] = array(
++    'value' => 300,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'enum',
++    'enum' => array(0 => _("Never"),
++                    30 => _("Every 30 seconds"),
++                    60 => _("Every minute"),
++                    120 => _("Every 2 minutes"),
++                    300 => _("Every 5 minutes")),
++    'desc' => _("Refresh Dynamic Menu Elements:")
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,36 @@
++// 300loginmaintenance
++// Login/Maintenance Tasks preferences
++
++// To disable maintenance entirely, set 'value' = false and
++// 'locked' = true for all of these. To just turn it off by default,
++// set 'value' false for do_maintenance.
++// perform maintenance operations?
++$_prefs['do_maintenance'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Perform maintenance operations on login?"),
++    'help' => 'prefs-do_maintenance');
++
++// last time maintenance was run.
++// value is a UNIX timestamp of the last time maintenance ran for the user.
++$_prefs['last_maintenance'] = array(
++    'value' => 0,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'implicit'
++);
++
++// confirm when doing maintenance operations? If false, they will
++// be performed with no input from/check with the user.
++$_prefs['confirm_maintenance'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Ask for confirmation before doing maintenance operations?"),
++    'help' => 'prefs-confirm_maintenance');
++
++// End Login/Maintenance preferences
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/310initialapplication
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/310initialapplication:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/310initialapplication	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 310initialapplication
++// what application should we go to after login?
++$_prefs['initial_application'] = array(
++    'value' => 'imp',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'select',
++    'desc' => sprintf(_("What application should %s display after login?"), $GLOBALS['registry']->get('name'))
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/320accesskey
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/320accesskey:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/320accesskey	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 320accesskey
++// should we create access keys?
++$_prefs['widget_accesskey'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Should access keys be defined for most links?")
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/330alphafilter
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/330alphafilter:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/330alphafilter	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 330alphafilter
++// should we not use the alpha image loader for IE?
++$_prefs['alpha_filter'] = array(
++    'value' => false,
++    'locked' => true,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("If you don't see any icons using Internet Explorer, you may need to check this box to turn off PNG transparency.")
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/340portallayout
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/340portallayout:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/340portallayout	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,17 @@
++// 340portallayout
++// the layout of the portal page.
++$_prefs['portal_layout'] = array(
++    'value' => 'a:0:\{\}',
++    'locked' => false,
++    'shared' => false,
++    'type' => 'implicit'
++);
++
++// the remote servers.
++$_prefs['remote_summaries'] = array(
++    'value' => 'a:0:\{\}',
++    'locked' => false,
++    'shared' => false,
++    'type' => 'implicit'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/350lastlogin
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/350lastlogin:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/350lastlogin	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,20 @@
++// 350lastlogin
++// last login time of user
++// value is a serialized array of the UNIX timestamp of the last
++// login, and the host that the last login was from.
++$_prefs['last_login'] = array(
++    'value' => 'a:0:\{\}',
++    'locked' => false,
++    'shared' => true,
++    'type' => 'implicit'
++);
++
++// show the last login time of user
++$_prefs['show_last_login'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Show last login time when logging in?")
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/360imspauth
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/360imspauth:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/360imspauth	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,18 @@
++// 360imspauth
++$_prefs['imsp_auth_user'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => false,
++    'type' => 'text',
++    'desc' => _("Alternate IMSP Username")
++);
++
++$_prefs['imsp_auth_pass'] = array(
++    'value' => '',
++    'locked' => false,
++    'shared' => false,
++    'type' => 'password',
++    'desc' => _("Alternate IMSP Password")
++);
++
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/370texteditor
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/370texteditor:1.1
+--- /dev/null	Tue Jun 14 17:21:29 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/370texteditor	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,38 @@
++// 370texteditor
++// Rich Text Editor preferences.
++
++$_prefs['contextmenu'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Enable right click context menu?")
++);
++
++$_prefs['tableoperations'] = array(
++    'value' => false,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Show table operations menu bar?")
++);
++
++$_prefs['listtype'] = array(
++    'value' => true,
++    'locked' => false,
++    'shared' => true,
++    'type' => 'checkbox',
++    'desc' => _("Allow setting of ordered list type?")
++);
++
++if ($registry->hasInterface('images')) \{
++    $_prefs['anselimage'] = array(
++        'value' => true,
++        'locked' => false,
++        'shared' => true,
++        'type' => 'checkbox',
++        'desc' => _("Enable insertion of images from Photo Galleries in text?")
++    );
++\}
++
++// End Rich Text Editor preferences.
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,38 @@
++// 00header
++/**
++ * registry.php -- Horde application registry.
++ *
++ * $Horde: horde/config/registry.php.dist,v 1.255.2.2 2004/12/24 01:05:12 chuck Exp $
++ *
++ * This configuration file is used by Horde to determine which Horde
++ * applications are installed and where, as well as how they interact.
++ *
++ * Application registry
++ * --------------------
++ * The following settings register installed Horde applications.
++ * By default, Horde assumes that the application directories live
++ * inside the horde directory.
++ *
++ * Attribute     Type     Description
++ * ---------     ----     -----------
++ * fileroot      string   The base filesystem path for the module's files.
++ * webroot       string   The base URI for the module.
++ * jsuri         string   The base URI for static javascript files.
++ * jsfs          string   The base filesystem path for static javascript files.
++ * themesuri     string   The base URI for the themes.
++ * themesfs      string   The base file system directory for the themes.
++ * icon          string   The URI for an icon to show in menus for the module.
++ *                        Setting this will override the default theme-based
++ *                        logic in the code.
++ * name          string   The name used in menus and descriptions for a module
++ * status        string   'inactive', 'hidden', 'notoolbar', 'heading',
++ *                        'block', 'admin', or 'active'.
++ * provides      string   Service types the module provides.
++ * initial_page  string   The initial (default) page (filename) for the module.
++ * templates     string   The filesystem path to the templates directory.
++ * menu_parent   string   The name of the 'heading' group that this app should
++ *                        show up under.
++ * target        string   The (optional) target frame for the link.
++ * url           string   The (optional) URL of 'heading' entries.
++ */
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100webroot
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100webroot:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100webroot	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,20 @@
++// 100webroot
++// We try to automatically determine the proper webroot for Horde
++// here. This still assumes that applications live under horde/. If
++// this results in incorrect results for you, simply change the two
++// uses of the $webroot variable in the 'horde' stanza below.
++//
++// Note for Windows users: the below assumes that your PHP_SELF
++// variable uses forward slashes. If it does not, you'll have to tweak
++// this.
++if (isset($_SERVER['PHP_SELF'])) \{
++    $webroot = strstr(dirname(__FILE__), '/' . array_shift(preg_split(';/;', $_SERVER['PHP_SELF'], 2, PREG_SPLIT_NO_EMPTY)));
++    if ($webroot !== false) \{
++        $webroot = preg_replace(';/config$;', '', $webroot);
++    \} else \{
++        $webroot = '/horde';
++    \}
++\} else \{
++    $webroot = '/horde';
++\}
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,11 @@
++// 110AppRegistryHorde
++$this->applications['horde'] = array(
++    'fileroot' => dirname(__FILE__) . '/..',
++    'webroot' => $webroot,
++    'initial_page' => 'login.php',
++    'name' => _("Horde"),
++    'status' => 'active',
++    'templates' => dirname(__FILE__) . '/../templates',
++    'provides' => 'horde'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120AppRegistryImp
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120AppRegistryImp:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120AppRegistryImp	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,16 @@
++// 120AppRegistryImp
++$this->applications['imp'] = array(
++    'fileroot' => dirname(__FILE__) . '/../imp',
++    'webroot' => $this->applications['horde']['webroot'] . '/imp',
++    'name' => _("Mail"),
++    'status' => 'active',
++    'provides' => 'mail',
++);
++
++$this->applications['imp-folders'] = array(
++    'status' => 'block',
++    'app' => 'imp',
++    'blockname' => 'tree_folders',
++    'menu_parent' => 'imp',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/130AppRegistryIngo
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/130AppRegistryIngo:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/130AppRegistryIngo	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 130AppRegistryIngo
++$this->applications['ingo'] = array(
++    'fileroot' => dirname(__FILE__) . '/../ingo',
++    'webroot' => $this->applications['horde']['webroot'] . '/ingo',
++    'name' => _("Filters"),
++    'status' => 'active',
++    'provides' => array('mail/blacklistFrom', 'mail/showBlacklist', 'mail/whitelistFrom', 'mail/showWhitelist', 'mail/applyFilters', 'mail/canApplyFilters', 'mail/showFilters'),
++    'menu_parent' => 'imp'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/140AppRegistrySam
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/140AppRegistrySam:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/140AppRegistrySam	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,12 @@
++// 140AppRegistrySam
++$this->applications['sam'] = array(
++    'fileroot' => dirname(__FILE__) . '/../sam',
++    'webroot' => $this->applications['horde']['webroot'] . '/sam',
++    'name' => _("Spam"),
++    'status' => 'inactive',
++    // Uncomment this line if you want Sam to handle the blacklist
++    // filter instead of Ingo:
++    // 'provides' => array('mail/blacklistFrom', 'mail/showBlacklist', 'mail/whitelistFrom', 'mail/showWhitelist'),
++    'menu_parent' => 'imp'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/150AppRegistryTroll
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/150AppRegistryTroll:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/150AppRegistryTroll	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,9 @@
++// 150AppRegistryTroll
++$this->applications['troll'] = array(
++    'fileroot' => dirname(__FILE__) . '/../troll',
++    'webroot' => $this->applications['horde']['webroot'] . '/troll',
++    'name' => _("Newsgroups"),
++    'status' => 'inactive',
++    'menu_parent' => 'imp'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/160AppRegistryVilma
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/160AppRegistryVilma:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/160AppRegistryVilma	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,9 @@
++// 160AppRegistryVilma
++$this->applications['vilma'] = array(
++    'fileroot' => dirname(__FILE__) . '/../vilma',
++    'webroot' => $this->applications['horde']['webroot'] . '/vilma',
++    'name' => _("Mail Admin"),
++    'status' => 'inactive',
++    'menu_parent' => 'imp'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/170AppRegistryMimp
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/170AppRegistryMimp:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/170AppRegistryMimp	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,8 @@
++// 170AppRegistryMimp
++$this->applications['mimp'] = array(
++    'fileroot' => dirname(__FILE__) . '/../mimp',
++    'webroot' => $this->applications['horde']['webroot'] . '/mimp',
++    'name' => _("Mobile Mail"),
++    'status' => 'inactive'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200HeadingOrganizing
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200HeadingOrganizing:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200HeadingOrganizing	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,6 @@
++// 200HeadingOrganizing
++$this->applications['organizing'] = array(
++    'name' => _("Organizing"),
++    'status' => 'heading',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryTurba
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryTurba:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryTurba	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 210AppRegistryTurba
++$this->applications['turba'] = array(
++    'fileroot' => dirname(__FILE__) . '/../turba',
++    'webroot' => $this->applications['horde']['webroot'] . '/turba',
++    'name' => _("Address Book"),
++    'status' => 'active',
++    'provides' => array('contacts', 'clients'),
++    'menu_parent' => 'organizing'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/220AppRegistryKronolith
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/220AppRegistryKronolith:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/220AppRegistryKronolith	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,17 @@
++// 220AppRegistryKronolith
++$this->applications['kronolith'] = array(
++    'fileroot' => dirname(__FILE__) . '/../kronolith',
++    'webroot' => $this->applications['horde']['webroot'] . '/kronolith',
++    'name' => _("Calendar"),
++    'status' => 'active',
++    'provides' => 'calendar',
++    'menu_parent' => 'organizing'
++);
++
++$this->applications['kronolith-menu'] = array(
++    'status' => 'block',
++    'app' => 'kronolith',
++    'blockname' => 'tree_menu',
++    'menu_parent' => 'kronolith',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/230AppRegistryMnemo
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/230AppRegistryMnemo:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/230AppRegistryMnemo	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 230AppRegistryMnemo
++$this->applications['mnemo'] = array(
++    'fileroot' => dirname(__FILE__) . '/../mnemo',
++    'webroot' => $this->applications['horde']['webroot'] . '/mnemo',
++    'name' => _("Notes"),
++    'status' => 'active',
++    'provides' => 'notes',
++    'menu_parent' => 'organizing'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/240AppRegistryNag
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/240AppRegistryNag:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/240AppRegistryNag	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 240AppRegistryNag
++$this->applications['nag'] = array(
++    'fileroot' => dirname(__FILE__) . '/../nag',
++    'webroot' => $this->applications['horde']['webroot'] . '/nag',
++    'name' => _("Tasks"),
++    'status' => 'active',
++    'provides' => 'tasks',
++    'menu_parent' => 'organizing'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/250AppRegistryGenie
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/250AppRegistryGenie:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/250AppRegistryGenie	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 250AppRegistryGenie
++$this->applications['genie'] = array(
++    'fileroot' => dirname(__FILE__) . '/../genie',
++    'webroot' => $this->applications['horde']['webroot'] . '/genie',
++    'name' => _("Wishlists"),
++    'status' => 'inactive',
++    'provides' => 'wishlist',
++    'menu_parent' => 'organizing'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/260AppRegistryTrean
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/260AppRegistryTrean:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/260AppRegistryTrean	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 260AppRegistryTrean
++$this->applications['trean'] = array(
++    'fileroot' => dirname(__FILE__) . '/../trean',
++    'webroot' => $this->applications['horde']['webroot'] . '/trean',
++    'name' => _("Bookmarks"),
++    'status' => 'inactive',
++    'provides' => 'bookmarks',
++    'menu_parent' => 'organizing'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300HeadingDevel
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300HeadingDevel:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300HeadingDevel	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,6 @@
++// 300HeadingDevel
++$this->applications['devel'] = array(
++    'name' => _("Development"),
++    'status' => 'heading',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/310AppRegistryChora
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/310AppRegistryChora:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/310AppRegistryChora	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,9 @@
++// 310AppRegistryChora
++$this->applications['chora'] = array(
++    'fileroot' => dirname(__FILE__) . '/../chora',
++    'webroot' => $this->applications['horde']['webroot'] . '/chora',
++    'name' => _("Version Control"),
++    'status' => 'active',
++    'menu_parent' => 'devel'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/320AppRegistryBabel
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/320AppRegistryBabel:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/320AppRegistryBabel	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,9 @@
++// 320AppRegistryBabel
++$this->applications['babel'] = array(
++    'fileroot' => dirname(__FILE__) . '/../babel',
++    'webroot' => $this->applications['horde']['webroot'] . '/babel',
++    'name' => _("i18n"),
++    'status' => 'inactive',
++    'menu_parent' => 'devel'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/330AppRegistryThor
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/330AppRegistryThor:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/330AppRegistryThor	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 330AppRegistryThor
++$this->applications['thor'] = array(
++    'fileroot' => dirname(__FILE__) . '/../thor',
++    'webroot' => $this->applications['horde']['webroot'] . '/thor',
++    'name' => _("Projects"),
++    'status' => 'inactive',
++    'provides' => 'projects',
++    'menu_parent' => 'devel'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/340AppRegistryWhups
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/340AppRegistryWhups:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/340AppRegistryWhups	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 340AppRegistryWhups
++$this->applications['whups'] = array(
++    'fileroot' => dirname(__FILE__) . '/../whups',
++    'webroot' => $this->applications['horde']['webroot'] . '/whups',
++    'name' => _("Tickets"),
++    'status' => 'inactive',
++    'provides' => 'tickets',
++    'menu_parent' => 'devel'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350AppRegistryLuxor
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350AppRegistryLuxor:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350AppRegistryLuxor	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,9 @@
++// 350AppRegistryLuxor
++$this->applications['luxor'] = array(
++    'fileroot' => dirname(__FILE__) . '/../luxor',
++    'webroot' => $this->applications['horde']['webroot'] . '/luxor',
++    'name' => _("X-Ref"),
++    'status' => 'inactive',
++    'menu_parent' => 'devel'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/360AppRegistryNic
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/360AppRegistryNic:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/360AppRegistryNic	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,10 @@
++// 360AppRegistryNic
++$this->applications['nic'] = array(
++    'fileroot' => dirname(__FILE__) . '/../nic',
++    'webroot' => $this->applications['horde']['webroot'] . '/nic',
++    'name' => _("Network"),
++    'status' => 'inactive',
++    'provides' => 'net',
++    'menu_parent' => 'devel'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/400HeadingInfo
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/400HeadingInfo:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/400HeadingInfo	Tue Jun 14 17:20:23 2005
+@@ -0,0 +1,6 @@
++// 400HeadingInfo
++$this->applications['info'] = array(
++    'name' => _("Information"),
++    'status' => 'heading',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryMottle
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryMottle:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryMottle	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 410AppRegistryMottle
++$this->applications['mottle'] = array(
++    'fileroot' => dirname(__FILE__) . '/../mottle',
++    'webroot' => $this->applications['horde']['webroot'] . '/mottle',
++    'name' => _("MOTD"),
++    'status' => 'inactive',
++    'menu_parent' => 'info'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/420AppRegistryJonah
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/420AppRegistryJonah:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/420AppRegistryJonah	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 420AppRegistryJonah
++$this->applications['jonah'] = array(
++    'fileroot' => dirname(__FILE__) . '/../jonah',
++    'webroot' => $this->applications['horde']['webroot'] . '/jonah',
++    'name' => _("News"),
++    'status' => 'inactive',
++    'provides' => 'news',
++    'menu_parent' => 'info'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/430AppRegistryOccam
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/430AppRegistryOccam:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/430AppRegistryOccam	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 430AppRegistryOccam
++$this->applications['occam'] = array(
++    'fileroot' => dirname(__FILE__) . '/../occam',
++    'webroot' => $this->applications['horde']['webroot'] . '/occam',
++    'name' => _("Courses"),
++    'status' => 'inactive',
++    'menu_parent' => 'info'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/440AppRegistryGoops
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/440AppRegistryGoops:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/440AppRegistryGoops	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 440AppRegistryGoops
++$this->applications['goops'] = array(
++    'fileroot' => dirname(__FILE__) . '/../goops',
++    'webroot' => $this->applications['horde']['webroot'] . '/goops',
++    'name' => _("Search Engines"),
++    'status' => 'inactive',
++    'menu_parent' => 'info'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/450AppRegistryKlutz
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/450AppRegistryKlutz:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/450AppRegistryKlutz	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 450AppRegistryKlutz
++$this->applications['klutz'] = array(
++    'fileroot' => dirname(__FILE__) . '/../klutz',
++    'webroot' => $this->applications['horde']['webroot'] . '/klutz',
++    'name' => _("Comics"),
++    'status' => 'inactive',
++    'provides' => 'comics',
++    'menu_parent' => 'info'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/460AppRegistryOrator
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/460AppRegistryOrator:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/460AppRegistryOrator	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 460AppRegistryOrator
++$this->applications['orator'] = array(
++    'fileroot' => dirname(__FILE__) . '/../orator',
++    'webroot' => $this->applications['horde']['webroot'] . '/orator',
++    'name' => _("Presentations"),
++    'status' => 'inactive',
++    'menu_parent' => 'info'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/500HeadingOffice
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/500HeadingOffice:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/500HeadingOffice	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,6 @@
++// 500HeadingOffice
++$this->applications['office'] = array(
++    'name' => _("Office"),
++    'status' => 'heading',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/510AppRegistryHermes
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/510AppRegistryHermes:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/510AppRegistryHermes	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 510AppRegistryHermes
++$this->applications['hermes'] = array(
++    'fileroot' => dirname(__FILE__) . '/../hermes',
++    'webroot' => $this->applications['horde']['webroot'] . '/hermes',
++    'name' => _("Time Tracking"),
++    'status' => 'inactive',
++    'menu_parent' => 'office',
++    'provides' => 'time'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/520AppRegistryJuno
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/520AppRegistryJuno:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/520AppRegistryJuno	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 520AppRegistryJuno
++$this->applications['juno'] = array(
++    'fileroot' => dirname(__FILE__) . '/../juno',
++    'webroot' => $this->applications['horde']['webroot'] . '/juno',
++    'name' => _("Accounting"),
++    'status' => 'inactive',
++    'menu_parent' => 'office'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/530AppRegistrySesha
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/530AppRegistrySesha:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/530AppRegistrySesha	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 530AppRegistrySesha
++$this->applications['sesha'] = array(
++    'fileroot' => dirname(__FILE__) . '/../sesha',
++    'webroot' => $this->applications['horde']['webroot'] . '/sesha',
++    'name' => _("Inventory"),
++    'status' => 'inactive',
++    'menu_parent' => 'office',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/600HeadingMyaccount
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/600HeadingMyaccount:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/600HeadingMyaccount	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,6 @@
++// 600HeadingMyaccount
++$this->applications['myaccount'] = array(
++    'name' => _("My Account"),
++    'status' => 'heading',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/610AppRegistryAccounts
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/610AppRegistryAccounts:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/610AppRegistryAccounts	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 610AppRegistryAccounts
++$this->applications['accounts'] = array(
++    'fileroot' => dirname(__FILE__) . '/../accounts',
++    'webroot' => $this->applications['horde']['webroot'] . '/accounts',
++    'name' => _("My Account"),
++    'status' => 'inactive',
++    'menu_parent' => 'myaccount',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/620AppRegistryGollem
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/620AppRegistryGollem:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/620AppRegistryGollem	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 620AppRegistryGollem
++$this->applications['gollem'] = array(
++    'fileroot' => dirname(__FILE__) . '/../gollem',
++    'webroot' => $this->applications['horde']['webroot'] . '/gollem',
++    'name' => _("File Manager"),
++    'status' => 'inactive',
++    'menu_parent' => 'myaccount',
++    'provides' => 'files',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/630AppRegistryForwards
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/630AppRegistryForwards:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/630AppRegistryForwards	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 630AppRegistryForwards
++$this->applications['forwards'] = array(
++    'fileroot' => dirname(__FILE__) . '/../forwards',
++    'webroot' => $this->applications['horde']['webroot'] . '/forwards',
++    'name' => _("Forwards"),
++    'status' => 'inactive',
++    'provides' => 'forwards',
++    'menu_parent' => 'myaccount',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/640AppRegistryPasswd
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/640AppRegistryPasswd:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/640AppRegistryPasswd	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 640AppRegistryPasswd
++$this->applications['passwd'] = array(
++    'fileroot' => dirname(__FILE__) . '/../passwd',
++    'webroot' => $this->applications['horde']['webroot'] . '/passwd',
++    'name' => _("Password"),
++    'status' => 'inactive',
++    'menu_parent' => 'myaccount'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/650AppRegistryJeta
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/650AppRegistryJeta:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/650AppRegistryJeta	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 650AppRegistryJeta
++$this->applications['jeta'] = array(
++    'fileroot' => dirname(__FILE__) . '/../jeta',
++    'webroot' => $this->applications['horde']['webroot'] . '/jeta',
++    'name' => _("SSH"),
++    'status' => 'inactive',
++    'menu_parent' => 'myaccount'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/660AppRegistryVacation
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/660AppRegistryVacation:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/660AppRegistryVacation	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 660AppRegistryVacation
++$this->applications['vacation'] = array(
++    'fileroot' => dirname(__FILE__) . '/../vacation',
++    'webroot' => $this->applications['horde']['webroot'] . '/vacation',
++    'name' => _("Vacation"),
++    'status' => 'inactive',
++    'provides' => 'vacation',
++    'menu_parent' => 'myaccount'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/700HeadingWebsite
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/700HeadingWebsite:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/700HeadingWebsite	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,6 @@
++// 700HeadingWebsite
++$this->applications['website'] = array(
++    'name' => _("Web Site"),
++    'status' => 'heading',
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/710AppRegistryGiapeta
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/710AppRegistryGiapeta:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/710AppRegistryGiapeta	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 710AppRegistryGiapeta
++$this->applications['giapeto'] = array(
++    'fileroot' => dirname(__FILE__) . '/../giapeto',
++    'webroot' => $this->applications['horde']['webroot'] . '/giapeto',
++    'name' => _("CMS"),
++    'status' => 'inactive',
++    'provides' => 'cms',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/720AppRegistryMidas
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/720AppRegistryMidas:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/720AppRegistryMidas	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 720AppRegistryMidas
++$this->applications['midas'] = array(
++    'fileroot' => dirname(__FILE__) . '/../midas',
++    'webroot' => $this->applications['horde']['webroot'] . '/midas',
++    'name' => _("Ads"),
++    'status' => 'inactive',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/730AppRegistryAgora
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/730AppRegistryAgora:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/730AppRegistryAgora	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 730AppRegistryAgora
++$this->applications['agora'] = array(
++    'fileroot' => dirname(__FILE__) . '/../agora',
++    'webroot' => $this->applications['horde']['webroot'] . '/agora',
++    'name' => _("Forums"),
++    'status' => 'inactive',
++    'provides' => 'forums',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/740AppRegistryOdin
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/740AppRegistryOdin:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/740AppRegistryOdin	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 740AppRegistryOdin
++$this->applications['odin'] = array(
++    'fileroot' => dirname(__FILE__) . '/../odin',
++    'webroot' => $this->applications['horde']['webroot'] . '/odin',
++    'name' => _("Data"),
++    'status' => 'inactive',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/750AppRegistryUlaform
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/750AppRegistryUlaform:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/750AppRegistryUlaform	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 750AppRegistryUlaform
++$this->applications['ulaform'] = array(
++    'fileroot' => dirname(__FILE__) . '/../ulaform',
++    'webroot' => $this->applications['horde']['webroot'] . '/ulaform',
++    'name' => _("Forms"),
++    'status' => 'inactive',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/755AppRegistryVolos
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/755AppRegistryVolos:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/755AppRegistryVolos	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 755AppRegistryVolos
++$this->applications['volos'] = array(
++    'fileroot' => dirname(__FILE__) . '/../volos',
++    'webroot' => $this->applications['horde']['webroot'] . '/volos',
++    'name' => _("Guestbook"),
++    'status' => 'inactive',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 760AppRegistryAnsel
++$this->applications['ansel'] = array(
++    'fileroot' => dirname(__FILE__) . '/../ansel',
++    'webroot' => $this->applications['horde']['webroot'] . '/ansel',
++    'name' => _("Photos"),
++    'status' => 'inactive',
++    'provides' => 'images',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/765AppRegistryScry
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/765AppRegistryScry:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/765AppRegistryScry	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 765AppRegistryScry
++$this->applications['scry'] = array(
++    'fileroot' => dirname(__FILE__) . '/../scry',
++    'webroot' => $this->applications['horde']['webroot'] . '/scry',
++    'name' => _("Polls"),
++    'status' => 'inactive',
++    'provides' => 'polls',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/770AppRegistryRakim
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/770AppRegistryRakim:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/770AppRegistryRakim	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 770AppRegistryRakim
++$this->applications['rakim'] = array(
++    'fileroot' => dirname(__FILE__) . '/../rakim',
++    'webroot' => $this->applications['horde']['webroot'] . '/rakim',
++    'name' => _("Support"),
++    'status' => 'inactive',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/775AppRegistryMerk
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/775AppRegistryMerk:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/775AppRegistryMerk	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,9 @@
++// 775AppRegistryMerk
++$this->applications['merk'] = array(
++    'fileroot' => dirname(__FILE__) . '/../merk',
++    'webroot' => $this->applications['horde']['webroot'] . '/merk',
++    'name' => _("Shopping"),
++    'status' => 'inactive',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 780AppRegistrySwoosh
++$this->applications['swoosh'] = array(
++    'fileroot' => dirname(__FILE__) . '/../swoosh',
++    'webroot' => $this->applications['horde']['webroot'] . '/swoosh',
++    'name' => _("SMS Messaging"),
++    'status' => 'inactive',
++    'provides' => 'sms',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/785AppRegistryWicked
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/785AppRegistryWicked:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/785AppRegistryWicked	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,10 @@
++// 785AppRegistryWicked
++$this->applications['wicked'] = array(
++    'fileroot' => dirname(__FILE__) . '/../wicked',
++    'webroot' => $this->applications['horde']['webroot'] . '/wicked',
++    'name' => _("Wiki"),
++    'status' => 'inactive',
++    'provides' => 'wiki',
++    'menu_parent' => 'website'
++);
++
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php:1.3
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,2 @@
++GID="www"
++PERMS=0640
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/prefs.php
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/prefs.php:1.1
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/prefs.php	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,2 @@
++GID="www"
++PERMS=0640
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php:1.3
+--- /dev/null	Tue Jun 14 17:21:30 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php	Tue Jun 14 17:20:24 2005
+@@ -0,0 +1,2 @@
++GID="www"
++PERMS=0640

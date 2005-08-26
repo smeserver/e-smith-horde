@@ -1,0 +1,989 @@
+Index: e-smith-horde/createlinks
+diff -u e-smith-horde/createlinks:1.8 e-smith-horde/createlinks:1.9
+--- e-smith-horde/createlinks:1.8	Mon Apr 18 18:01:13 2005
++++ e-smith-horde/createlinks	Mon Apr 18 20:37:20 2005
+@@ -4,7 +4,7 @@
+ 
+ # conf-horde
+ 
+-foreach (qw(horde.php registry.php mime_drivers.php))
++foreach (qw(conf.php))
+ {
+     templates2events("/home/httpd/html/horde/config/$_", qw(
+ 	    bootstrap-console-save
+@@ -28,6 +28,7 @@
+     30mysql_create_tables
+     21horde.mysql_set_password
+     40mysql_create_indexes
++    75horde-2.2_to_3.0
+     ))
+ {
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+@@ -47,6 +48,7 @@
+     30mysql_create_tables.sql
+     21horde.mysql_set_password.sql
+     40mysql_create_indexes.sql
++    75horde-2.2_to_3.0
+     ))
+ {
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+Index: e-smith-horde/e-smith-horde.spec
+diff -u /dev/null e-smith-horde/root/etc/e-smith/db/configuration/migrate/HordePassword:1.1
+--- /dev/null	Mon Apr 18 20:37:50 2005
++++ e-smith-horde/root/etc/e-smith/db/configuration/migrate/HordePassword	Mon Apr 18 20:37:20 2005
+@@ -0,0 +1,30 @@
++{
++    my $horderec = $DB->get('horde') || $DB->new_record();
++    my $horde_pw = $horderec->prop('DbPassword');
++    unless ($horde_pw)
++    {
++	use MIME::Base64 qw(encode_base64);
++
++	$horde_pw = "not set due to error";
++	if ( open( RANDOM, "/dev/urandom" ) )
++	{
++	    # 57 bytes is a full line of Base64 coding, and contains
++	    # 456 bits of randomness - given a perfectly random /dev/random
++	    if ( read( RANDOM, $buf, 57 ) != 57 )
++	    {
++		warn("Short read from /dev/random: $!");
++	    }
++	    else
++	    {
++		$horde_pw = encode_base64($buf)
++	    }
++	    close RANDOM;
++	}
++	else
++	{
++	    warn "Could not open /dev/urandom: $!";
++	    return undef;
++	}
++	$horderec->set_prop('DbPassword', encode_base64($buf));
++    }
++}
+Index: e-smith-horde/root/etc/e-smith/events/actions/conf-horde-startup
+diff -u e-smith-horde/root/etc/e-smith/events/actions/conf-horde-startup:1.17 e-smith-horde/root/etc/e-smith/events/actions/conf-horde-startup:removed
+--- e-smith-horde/root/etc/e-smith/events/actions/conf-horde-startup:1.17	Tue Jan  6 11:59:14 2004
++++ e-smith-horde/root/etc/e-smith/events/actions/conf-horde-startup	Wed Dec 31 19:00:00 1969
+@@ -1,122 +0,0 @@
+-#!/usr/bin/perl -w
+-
+-#----------------------------------------------------------------------
+-# copyright (C) 2002 Mitel Networks Corp.
+-#
+-# This program is free software; you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation; either version 2 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program; if not, write to the Free Software
+-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+-#
+-# Technical support for this program is available from Mitel Networks.
+-# For details, please visit our web site at www.e-smith.com or
+-# call us on 1 888 ESMITH 1 (US/Canada toll free) or +1 613 564 8000
+-#----------------------------------------------------------------------
+-
+-package esmith;
+-
+-use strict;
+-use Errno;
+-use esmith::ConfigDB;
+-use esmith::util;
+-use esmith::templates;
+-
+-my $conf = esmith::ConfigDB->open();
+-
+-#--------------------------------------------------------------
+-# Set a random password if we don't already have one.
+-#--------------------------------------------------------------
+-my $horderec = $conf->get('horde');
+-my $horde_pw = $horderec->prop('DbPassword');
+-unless ($horde_pw)
+-{
+-    $horde_pw = "";
+-    for(my $i=0; $i<=8; $i++)
+-    {
+-        my $char;
+-        next unless (($char = chr(rand(58)+65)) =~ /[a-zA-Z]/);
+-
+-        $horde_pw .= $char;
+-    }
+-    $horderec->set_prop('DbPassword', $horde_pw);
+-}
+-processTemplate({TEMPLATE_PATH =>
+-    '/home/httpd/html/horde/scripts/db/mysql_set_password.sql',
+-    PERMS => 0600});
+-
+-#--------------------------------------------------------------
+-# Update the horde user and db permissions
+-#--------------------------------------------------------------
+-
+-unlink "/etc/e-smith/sql/init/20horde.mysql_update_privs.sql";
+-symlink "/home/httpd/html/horde/scripts/db/mysql_update_privs.sql",
+-    "/etc/e-smith/sql/init/20horde.mysql_update_privs.sql";
+-
+-unlink "/etc/e-smith/sql/init/21horde.mysql_set_password.sql";
+-symlink "/home/httpd/html/horde/scripts/db/mysql_set_password.sql",
+-    "/etc/e-smith/sql/init/21horde.mysql_set_password.sql";
+-
+-#--------------------------------------------------------------
+-# Set up Horde MySQL tables
+-#--------------------------------------------------------------
+-
+-unlink "/etc/e-smith/sql/init/30mysql_create_tables.sql";
+-symlink "/home/httpd/html/horde/scripts/db/mysql_create_tables.sql",
+-    "/etc/e-smith/sql/init/30mysql_create_tables.sql";
+-
+-#--------------------------------------------------------------
+-# Set up Horde MySQL indexes if they don't exist
+-#--------------------------------------------------------------
+-
+-unlink "/etc/e-smith/sql/init/40mysql_create_indexes.sql";
+-symlink "/home/httpd/html/horde/scripts/db/mysql_create_indexes.sql",
+-    "/etc/e-smith/sql/init/40mysql_create_indexes.sql"
+-    unless (-f "/var/lib/mysql/horde/horde_categories.frm");
+-
+-#--------------------------------------------------------------
+-# Set up Horde migration SQL
+-#--------------------------------------------------------------
+-
+-unlink "/etc/e-smith/sql/init/20mysql_migrate_horde.sql";
+-symlink "/home/httpd/html/horde/scripts/db/mysql_migrate_horde.sql",
+-    "/etc/e-smith/sql/init/20mysql_migrate_horde.sql";
+-
+-#--------------------------------------------------------------
+-# Look for any dangling symlinks and remove them.
+-#--------------------------------------------------------------
+-
+-my $dir = '/etc/e-smith/sql/init';
+-local *DIR;
+-opendir (DIR, $dir) or die "Can't open $dir: $!\n";
+-while (my $line = readdir(DIR))
+-{
+-    # Skip hidden dirs
+-    next if $line =~ /^\./;
+-    # If this is a symlink...
+-    if (-l "$dir/$line")
+-    {
+-        my $linkto = readlink("$dir/$line");
+-        unless (-e $linkto)
+-        {
+-            unlink "$dir/$line" or die "Can't remove $line: $!\n";
+-        }
+-    }
+-}
+-
+-#--------------------------------------------------------------
+-# Reset ownership of horde directories.
+-#--------------------------------------------------------------
+-
+-esmith::util::chownFile("root", "www",
+-    "/home/httpd/html/horde/config");
+-
+-exit (0);
+Index: e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0:1.1
+--- /dev/null	Mon Apr 18 20:37:50 2005
++++ e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0	Mon Apr 18 20:37:20 2005
+@@ -0,0 +1,3 @@
++#! /bin/sh
++
++exec mysql < /home/httpd/html/horde/scripts/upgrades/2.2_to_3.0.mysql.sql
+Index: e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess
+diff -u e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess:1.5 e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess:1.6
+--- e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess:1.5	Thu Jan 20 16:35:48 2005
++++ e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess	Mon Apr 18 20:37:20 2005
+@@ -30,6 +30,8 @@
+ #    php_value auto_prepend_file /home/httpd/horde-phplib/prepend.php3
+     php_flag  magic_quotes_gpc	off
+     php_flag  track_vars	on
++    php_flag	session.use_trans_sid	off
++    php_admin_flag	allow_url_fopen	on
+ </Directory>
+ 
+ <Directory /home/httpd/html/horde/config>
+@@ -48,11 +50,6 @@
+ </Directory>
+ 
+ <Directory /home/httpd/html/horde/templates>
+-    order deny,allow
+-    deny from all
+-</Directory>
+-
+-<Directory /home/httpd/html/horde/admin>
+     order deny,allow
+     deny from all
+ </Directory>
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/100GeneralSettings
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/100GeneralSettings:1.2 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/100GeneralSettings:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/100GeneralSettings:1.2	Wed Apr 23 11:24:25 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/100GeneralSettings	Wed Dec 31 19:00:00 1969
+@@ -1,66 +0,0 @@
+-/**
+- ** General Horde Settings
+- **/
+-
+-/* The value to set error_reporting() to. Valid values are: E_ERROR,
+- * E_WARNING, E_PARSE, E_NOTICE, E_CORE_ERROR, E_CORE_WARNING,
+- * E_ALL. See http://www.php.net/manual/function.error-reporting.php
+- * for more information.
+- */
+-$conf['debug_level'] = E_ALL;
+-
+-/* If we need to perform a long operation, what should we set
+- * max_execution_time to (in seconds)? 0 means no limit; however, a
+- * value of 0 will cause a warning if you are running in safe
+- * mode. See http://www.php.net/manual/function.set-time-limit.php for
+- * more information.
+- */
+-$conf['max_exec_time'] = 0;
+-
+-/* What name should we use for the session that Horde apps share? If
+- * you want to share sessions with other applications on your
+- * webserver, you will need to make sure that they are using the same
+- * session name.
+- */
+-$conf['session_name'] = 'Horde';
+-
+-// What caching level should we use for the session? DO NOT CHANGE
+-// THIS UNLESS YOU _REALLY_ KNOW WHAT YOU ARE DOING. Setting this to
+-// anything other than 'nocache' will almost certainly result in
+-// severely broken script behavior.
+-$conf['cache_limiter'] = 'nocache';
+-
+-// How long should sessions last? 0 means that the session ends when
+-// the user closes their browser. Set other values with care - see
+-// http://www.php.net/manual/en/function.session-set-cookie-params.php.
+-$conf['session_timeout'] = 0;
+-
+-/* Determines how we generate full URLs (for location headers and
+- * such). Possible values are:
+- *   0 - Assume that we are not using SSL and never generate https URLS.
+- *   1 - Assume that we are using SSL and always generate https URLS.
+- *   2 - Attempt to auto-detect, and generate URLs appropriately.
+- */
+-$conf['use_ssl'] = 2;
+-
+-/* If this option is set to true, and you have the php zlib extension,
+- * pages over a certain size will be compressed and sent to the
+- * browser as gzip-encoded data in order to save bandwidth. There is a
+- * CPU-usage penalty to pay for this, but the decrease in page size
+- * can be dramatic (70k to under 10k for a full mailbox page), and is
+- * more than worth it over anything but an extremely fast link.
+- */
+-$conf['compress_pages'] = true;
+-
+-/* What umask should we run with? This will affect the permissions on
+- * any temporary files that are created. This value is an integer
+- * (specify it WITHOUT quotes).
+- */
+-$conf['umask'] = 077;
+-
+-/* If you want to use a temporary directory other than the system
+- * default or the one specified in php's upload_tmp_dir value, enter
+- * it here.
+- */
+-$conf['tmpdir'] = null;
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/120Authentication
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/120Authentication:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/120Authentication:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/120Authentication:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/120Authentication	Wed Dec 31 19:00:00 1969
+@@ -1,31 +0,0 @@
+-/**
+- ** Horde Authentication
+- **/
+-
+-/* If you want to use IMP with Horde and don't want to let the users
+- * login twice (once for Horde and once for IMP) you can setup Horde
+- * to let IMP do the authentication stuff. Just uncomment the 
+- * auth/login/logout lines in registry.php instead of configuring
+- * the following settings.
+- */
+-
+-/* Which users should be treated as administrators (root, super-user)
+- * by Horde? Example: $conf['auth']['admins'] = array('admin', 'john');
+- */
+-$conf['auth']['admins'] = array();
+-
+-// What backend should we use for authenticating users to Horde? Valid
+-// options are currently 'imap', 'ldap', 'mcal', 'sql', and 'ftp'.
+-$conf['auth']['driver'] = '';
+-
+-/* An array holding any parameters that the Auth object will need to
+- * function correctly. For IMAP, this is the server name, port,
+- * protocol, etc.
+- * See $conf['prefs']['params'] further down for an example how to
+- * setup a SQL backend. But you must use another SQL table for the
+- * authentication driver. A SQL script can be found in 
+- * horde/scripts/db/auth.sql .
+- */
+-$conf['auth']['params'] = array();
+-//$conf['auth']['params']['dsn'] = '\{imap.example.com/imap:143\}INBOX';
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/140Logging
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/140Logging:1.2 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/140Logging:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/140Logging:1.2	Tue Dec 31 23:07:13 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/140Logging	Wed Dec 31 19:00:00 1969
+@@ -1,36 +0,0 @@
+-
+-/**
+- ** Horde Logging
+- **/
+-
+-/* Should Horde log errors and other useful information? */
+-$conf['log']['enabled'] = true;
+-
+-/* What log driver should we use? Valid values are 'file', 'mcal',
+- * 'sql', and 'syslog'.
+- */
+-$conf['log']['type'] = 'syslog';
+-
+-/* What is the name of the log? For the 'file' driver, this is the
+- * path to a text file; for mcal, it would be the name of a calendar,
+- * and for sql it would be the table name to use. For the 'syslog'
+- * driver it is the facility as a _constant_ (with no quotes), e.g.:
+- * ... = LOG_LOCAL0;
+- */
+-$conf['log']['name'] = LOG_SYSLOG;
+-
+-/* What level of messages should we log? The values are LOG_EMERG,
+- * LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO,
+- * and LOG_DEBUG. Each level logs itself and all those that come
+- * before it: LOG_ALERT would only log alerts and emergencies, but
+- * LOG_DEBUG would log everything.
+- */
+-$conf['log']['priority'] = LOG_NOTICE;
+-
+-/* What identifier should we use in the logs? */
+-$conf['log']['ident'] = 'HORDE';
+-
+-/* Any additonal configuration information, like an MCAL or database
+- * username and password.
+- */
+-$conf['log']['params'] = array();
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/160PreferenceSystem
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/160PreferenceSystem:1.3 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/160PreferenceSystem:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/160PreferenceSystem:1.3	Fri Nov 14 15:57:57 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/160PreferenceSystem	Wed Dec 31 19:00:00 1969
+@@ -1,33 +0,0 @@
+-
+-/**
+- ** Preference System Settings
+- **/
+-
+-/* What preferences driver should we use? Valid values are 'none'
+- * (meaning use system defaults and don't save any user preferences),
+- * 'session' (preferences only persist during the login), 'ldap', 
+- * and 'sql'.
+- */
+-$conf['prefs']['driver'] = 'sql';
+-
+-/* Any parameters that the preferences driver needs. This includes
+- * database or ldap server, username/password to connect with, etc.
+- */
+-$conf['prefs']['params'] = array();
+-
+-/* This is an example configuration for a MySQL preference backend. 
+- * Be sure to set the prefs driver to 'sql' above if you use this
+- * configuration. 
+- */
+-$conf['prefs']['params']['phptype'] = 'mysql';
+-$conf['prefs']['params']['hostspec'] = 'localhost';
+-$conf['prefs']['params']['username'] = 'horde';
+-{
+-    $horderec = $DB->get('horde');
+-    $horde_pw = $horderec->prop('DbPassword') || 'horde';
+-    return '';
+-}
+-$conf['prefs']['params']['password'] = '{$horde_pw}';
+-$conf['prefs']['params']['database'] = 'horde';
+-$conf['prefs']['params']['table'] = 'horde_prefs';
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/180CategorySystem
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/180CategorySystem:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/180CategorySystem:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/180CategorySystem:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/180CategorySystem	Wed Dec 31 19:00:00 1969
+@@ -1,17 +0,0 @@
+-
+-/**
+- ** Category System Settings
+- **/
+-
+-/* What backend should we use for Horde Categories? Valid options are
+- * currently 'none' and 'sql'. In the case of 'none', the categories
+- * only live for the duration of a single request - they are NOT
+- * stored in the user's session.
+- */
+-$conf['category']['driver'] = 'none';
+-
+-/* An array holding any parameters that the Category object will need
+- * to function correctly.
+- */
+-$conf['category']['params'] = array();
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/200CacheSystem
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/200CacheSystem:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/200CacheSystem:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/200CacheSystem:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/200CacheSystem	Wed Dec 31 19:00:00 1969
+@@ -1,18 +0,0 @@
+-
+-/**
+- ** Cache System Settings
+- **/
+- 
+-/* If you want to enable the Horde Cache, select a driver here.
+- * This is used to speed up portions of Horde by storing
+- * commonly processed objects to disk.
+- * Valid values are 'none' (don't cache any objects),
+- *                  'file' (store objects in filesystem)
+- */
+-$conf['cache']['driver'] = 'none';
+-// $conf['cache']['driver'] = 'file';
+- 
+-/* Any parameters that the caching driver needs. */
+-$conf['cache']['params'] = array();
+-// $conf['cache']['params']['dir'] = '/var/cache/horde';
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/220Mailer
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/220Mailer:1.2 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/220Mailer:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/220Mailer:1.2	Tue Jun 18 14:53:43 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/220Mailer	Wed Dec 31 19:00:00 1969
+@@ -1,17 +0,0 @@
+-
+-/**
+- ** Mailer
+- **/
+-
+-/* What method should we use for sending mail? Valid options are
+- * currently 'sendmail' and 'smtp'.
+- */
+-$conf['mailer']['type'] = 'smtp';
+-
+-/* An array holding any parameters that the Mail object will need to
+- * function correctly. For sendmail, this is mainly the sendmail_path
+- * option; SMTP requires at least a server and a port (if nonstandard).
+- */
+-$conf['mailer']['params'] = array();
+-// $conf['mailer']['params'] = array('sendmail_path' => '/usr/lib/sendmail');
+-$conf['mailer']['params'] = array('server' => 'mail.{ $DomainName }');
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/230VirtualFileStorage
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/230VirtualFileStorage:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/230VirtualFileStorage:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/230VirtualFileStorage:1.1	Wed Apr 23 11:24:25 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/230VirtualFileStorage	Wed Dec 31 19:00:00 1969
+@@ -1,15 +0,0 @@
+-/**
+- ** Virtual File Storage
+- **/
+-
+-// If a VFS (virtual filesystem) backend is required, which one should
+-// we use? Options are 'file' and 'sql'.
+-$conf['vfs']['type'] = 'file';
+-
+-// What configuration parameters should be set for the VFS system? For
+-// the 'file' driver, the only parameter is 'vfsroot' - where on the
+-// real filesystem should Horde use as root of the virtual
+-// filesystem. For the 'sql' driver, see the examples for the 'prefs'
+-// section, above.
+-$conf['vfs']['params']['vfsroot'] = '/tmp';
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/240ProblemReporting
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/240ProblemReporting:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/240ProblemReporting:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/240ProblemReporting:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/240ProblemReporting	Wed Dec 31 19:00:00 1969
+@@ -1,13 +0,0 @@
+-
+-/**
+- ** Problem Reporting
+- **/
+-
+-/* Should we display a problem reporting link in Horde application
+- * menus?
+- */
+-$conf['problems']['enabled'] = false;
+-
+-/* If so, where should problem report emails be sent? */
+-$conf['problems']['email'] = 'postmaster@example.com';
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/260UserCapabilities
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/260UserCapabilities:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/260UserCapabilities:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/260UserCapabilities:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/260UserCapabilities	Wed Dec 31 19:00:00 1969
+@@ -1,7 +0,0 @@
+-
+-/**
+- ** User Capabilities and Constraints
+- **/
+-
+-/* Should we display help links to the user? */
+-$conf['user']['online_help'] = true;
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/280Stylesheets
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/280Stylesheets:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/280Stylesheets:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/280Stylesheets:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/280Stylesheets	Wed Dec 31 19:00:00 1969
+@@ -1,12 +0,0 @@
+-
+-/**
+- ** Stylesheets
+- **/
+-
+-/* If this is true, then we will allow the browser to cache generated
+- * stylesheets, saving us from generating the stylesheet on every page
+- * request, but meaning that users will need to do a manual refresh to
+- * see any stylesheet changes.
+- */
+-$conf['css']['cached'] = true;
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/300MenuSettings
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/300MenuSettings:1.2 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/300MenuSettings:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/300MenuSettings:1.2	Wed Apr 23 11:24:25 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/horde.php/300MenuSettings	Wed Dec 31 19:00:00 1969
+@@ -1,10 +0,0 @@
+-
+-/**
+- ** Menu settings
+- **/
+-
+-/* Should we use DHTML to display a floating menu of Horde appliation
+- * links, instead of a frame?
+- */
+-$conf['menu']['floating_bar'] = false;
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00mime_drivers
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00mime_drivers:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00mime_drivers:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00mime_drivers:1.1	Thu Apr 25 10:55:58 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00mime_drivers	Wed Dec 31 19:00:00 1969
+@@ -1,81 +0,0 @@
+-/**
+- * Decide which output drivers you want to activate.
+- * Right now, the choices are:
+- *
+- * php:          The internal PHP4 syntax highlighting engine
+- * enscript:     GNU enscript
+- * tgz:          Tarballs, including gzipped ones.
+- * rar:          RAR archives
+- * msword:       Microsoft Word files via wvHtml
+- * msexcel:      Microsoft Excel files via xlhtml
+- * mspowerpoint: Microsoft Powerpoint files via ppthtml
+- * vcard:        vCards
+- * zip:          Zip files
+- * rpm:          RPM packages
+- * deb:          Debian packages
+- */
+-
+-$mime_drivers_map['horde']['registered'] = array(
+-    'php', 'tgz', 'vcard', 'zip', 'rpm'
+-    // ,'msword', 'msexcel', 'mspowerpoint',
+-    // ,'enscript', 'rar', 'deb'
+-    );
+-
+-
+-/**
+- * If you want to specifically override any MIME type to be
+- * handled by a specific driver, then enter it here.  Normally,
+- * this is safe to leave, but it's useful when multiple drivers
+- * handle the same MIME type, and you want to specify exactly
+- * which one should handle it.
+- */
+-
+-$mime_drivers_map['horde']['overrides'] = array();
+-
+-
+-/**
+- * Driver specific settings.  Here, you have to configure each
+- * driver which you chose to activate above.  Default settings have
+- * been filled in for them, and if you haven't activated it, then
+- * just leave it as it is - it won't get loaded.
+- *
+- * The 'handles' setting below shouldn't be changed in most 
+- * circumstances.  It registers a set of MIME type that the driver
+- * can handle.  The 'x-extension' MIME type is a special one to
+- * Horde that maps a file extension to a MIME type.  It's useful
+- * when you know that all files ending in '.c' are C files, for
+- * example.
+- *
+- * The 'icons' entry is for the driver to register various icons
+- * for the MIME types it handles.  The array consists of a 
+- * 'default' icon for that driver, and can also include specific
+- * MIME-types which can have their own icons.
+- *
+- */
+-
+-/**
+- * Default driver settings
+- */
+-
+-$mime_drivers['horde']['default']['icons'] = array(
+-        'default'                       => 'text.gif',
+-        'application/x-gzip'            => 'compressed.gif',
+-        'application/pdf'               => 'pdf.gif',
+-        'application/pgp-signature'     => 'encryption.gif',
+-        'application/x-pkcs7-signature' => 'encryption.gif',
+-        'application/octet-stream'      => 'binary.gif',
+-        'audio/basic'                   => 'audio.gif',
+-        'audio/x-sun'                   => 'audio.gif',
+-        'image/bmp'                     => 'image.gif',
+-        'image/gif'                     => 'image.gif',
+-        'image/jpeg'                    => 'image.gif',
+-        'image/pjpeg'                   => 'image.gif',
+-        'image/pbm'                     => 'image.gif',
+-        'image/pgm'                     => 'image.gif',
+-        'image/png'                     => 'image.gif',
+-        'image/tiff'                    => 'image.gif',
+-        'image/x-png'                   => 'image.gif',
+-        'message/delivery-status'       => 'mail.gif',
+-        'message/rfc822'                => 'mail.gif',
+-        'unknown/octet-stream'          => 'binary.gif');
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/10php_driver
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/10php_driver:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/10php_driver:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/10php_driver:1.1	Tue Apr 23 15:50:38 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/10php_driver	Wed Dec 31 19:00:00 1969
+@@ -1,12 +0,0 @@
+-
+-/**
+- * PHP driver settings
+- */
+-
+-$mime_drivers['horde']['php']['handles'] = array(
+-    'x-extension/php', 'x-extension/php3', 'x-extension/phps',
+-    'x-extension/php3s', 'application/x-httpd-php',
+-    'application/x-httpd-php3', 'application/x-httpd-phps');
+-$mime_drivers['horde']['php']['icons'] = array(
+-    'default' => 'php.gif');
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/20enscript_driver
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/20enscript_driver:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/20enscript_driver:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/20enscript_driver:1.1	Tue Apr 23 15:50:38 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/20enscript_driver	Wed Dec 31 19:00:00 1969
+@@ -1,20 +0,0 @@
+-
+-/**
+- * GNU Enscript driver settings
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the enscript binary. */
+-// $mime_drivers['horde']['enscript']['location'] = '/usr/bin/enscript';
+-// $mime_drivers['horde']['enscript']['inline'] = false;
+-// $mime_drivers['horde']['enscript']['handles'] = array(
+-//     'text/html', 'x-extension/pl', 'x-extension/c',
+-//     'text/xml', 'application/x-sh', 'application/x-javascript',
+-//     'x-extension/java', 'x-extension/h', 'x-extension/cpp');
+-// $mime_drivers['horde']['enscript']['icons'] = array(
+-//     'default'          => 'text.gif',
+-//     'text/html'        => 'html.gif',
+-//     'text/xml'         => 'xml.gif',
+-//     'x-extension/c'    => 'source-c.gif',
+-//     'x-extension/h'    => 'source-h.gif',
+-//     'x-extension/java' => 'source-java.gif');
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/30archivers
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/30archivers:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/30archivers:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/30archivers:1.1	Tue Apr 23 15:50:38 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/30archivers	Wed Dec 31 19:00:00 1969
+@@ -1,45 +0,0 @@
+-
+-/**
+- * Tar driver settings
+- */
+-
+-/* Location of the tar binary. */
+-$mime_drivers['horde']['tgz']['location'] = '/bin/tar';
+-$mime_drivers['horde']['tgz']['inline'] = true;
+-$mime_drivers['horde']['tgz']['handles'] = array(
+-    'x-extension/tgz',
+-    'x-extension/tar',
+-    'application/x-gzip-compressed',
+-    'application/x-tar');
+-$mime_drivers['horde']['tgz']['icons'] = array(
+-    'default' => 'compressed.gif');
+-
+-
+-/**
+- * Zip file driver settings
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the zipinfo binary. */
+-$mime_drivers['horde']['zip']['location'] = '/usr/bin/zipinfo';
+-$mime_drivers['horde']['zip']['inline'] = true;
+-$mime_drivers['horde']['zip']['handles'] = array(
+-    'x-extension/zip',
+-    'application/x-zip-compressed');
+-$mime_drivers['horde']['zip']['icons'] = array(
+-    'default' => 'compressed.gif');
+-
+-
+-/**
+- * RAR archive driver settings
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the rar binary. */
+-// $mime_drivers['horde']['rar']['location'] = '/usr/bin/rar';
+-// $mime_drivers['horde']['rar']['inline'] = true;
+-// $mime_drivers['horde']['rar']['handles'] = array(
+-//     'x-extension/rar');
+-// $mime_drivers['horde']['rar']['icons'] = array(
+-//     'default' => 'compressed.gif');
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/40microsoft_office
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/40microsoft_office:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/40microsoft_office:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/40microsoft_office:1.1	Tue Apr 23 15:50:38 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/40microsoft_office	Wed Dec 31 19:00:00 1969
+@@ -1,52 +0,0 @@
+-/**
+- * MS Word driver settings
+- * This driver requires wvWare (www.wvware.com) to be installed.
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the wvHtml binary. */
+-// $mime_drivers['horde']['msword']['location'] = '/usr/bin/wvHtml';
+-// $mime_drivers['horde']['msword']['inline'] = true;
+-// $mime_drivers['horde']['msword']['handles'] = array(
+-//     'application/msword',
+-//     'text/rtf',
+-//     'x-extension/doc',
+-//     'x-extension/rtf');
+-// $mime_drivers['horde']['msword']['icons'] = array(
+-//     'default' => 'msword.gif');
+-
+-
+-/**
+- * MS Excel driver settings
+- * This driver requires xlhtml (www.xlhtml.org) to be installed.
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the xlhtml binary. */
+-// $mime_drivers['horde']['msexcel']['location'] = '/usr/local/bin/xlhtml';
+-// $mime_drivers['horde']['msexcel']['inline'] = false;
+-// $mime_drivers['horde']['msexcel']['handles'] = array(
+-//     'application/vnd.ms-excel',
+-//     'application/msexcel',
+-//     'x-extension/xls');
+-// $mime_drivers['horde']['msexcel']['icons'] = array(
+-//     'default' => 'msexcel.gif');
+-
+-
+-/**
+- * MSPowerpoint driver settings
+- * This driver requires ppthtml, included with xlhtml (www.xlhtml.org),
+- * to be installed.
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the ppthtml binary. */
+-// $mime_drivers['horde']['mspowerpoint']['location'] = '/usr/local/bin/ppthtml';
+-// $mime_drivers['horde']['mspowerpoint']['inline'] = false;
+-// $mime_drivers['horde']['mspowerpoint']['handles'] = array(
+-//     'application/vnd.ms-powerpoint',
+-//     'application/mspowerpoint',
+-//     'x-extension/ppt');
+-// $mime_drivers['horde']['mspowerpoint']['icons'] = array(
+-//     'default' => 'mspowerpoint.gif');
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/45vcard
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/45vcard:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/45vcard:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/45vcard:1.1	Tue Apr 23 15:50:38 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/45vcard	Wed Dec 31 19:00:00 1969
+@@ -1,9 +0,0 @@
+-/**
+- * vCard driver settings
+- */
+-
+-$mime_drivers['horde']['vcard']['handles'] = array(
+-    'text/x-vcard',
+-    'x-extension/vcf');
+-$mime_drivers['horde']['vcard']['icons'] = array(
+-    'default' => 'vcard.gif');
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/50packagers
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/50packagers:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/50packagers:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/50packagers:1.1	Tue Apr 23 15:50:38 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/50packagers	Wed Dec 31 19:00:00 1969
+@@ -1,29 +0,0 @@
+-
+-/**
+- * RPM driver settings
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the rpm binary. */
+-$mime_drivers['horde']['rpm']['location'] = '/usr/bin/rpm';
+-$mime_drivers['horde']['rpm']['inline'] = false;
+-$mime_drivers['horde']['rpm']['handles'] = array(
+-    'application/x-rpm',
+-    'x-extension/rpm');
+-$mime_drivers['horde']['rpm']['icons'] = array(
+-    'default' => 'rpm.gif');
+-
+-
+-/**
+- * Debian package driver settings
+- * Uncomment these lines to use this driver.
+- */
+-
+-/* Location of the dpkg binary. */
+-// $mime_drivers['horde']['deb']['location'] = '/usr/bin/dpkg';
+-// $mime_drivers['horde']['deb']['inline'] = false;
+-// $mime_drivers['horde']['deb']['handles'] = array(
+-//     'application/x-debian-package',
+-//     'x-extension/deb');
+-// $mime_drivers['horde']['deb']['icons'] = array(
+-//     'default' => 'deb.gif');
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100AuthHandler
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100AuthHandler:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100AuthHandler:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100AuthHandler:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/100AuthHandler	Wed Dec 31 19:00:00 1969
+@@ -1,15 +0,0 @@
+-/**
+- * Handlers
+- * --------
+- * The following settings register particular Horde applications as handlers
+- * for functionality intended to be common to multiple Horde applications.
+- */
+-
+-/* auth: Handler for user authentication.
+- *   Uncomment the auth/login/logout lines if you want to let either
+- *   IMP or Gollem handle the authentication for Horde. This avoids the
+- *   "double login" while accessing IMP.
+- */
+-$this->registry['auth']['login'] = 'imp';
+-$this->registry['auth']['logout'] = 'imp';
+-
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110MailHandler
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110MailHandler:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110MailHandler:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110MailHandler:1.1	Tue Apr  9 13:43:28 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110MailHandler	Wed Dec 31 19:00:00 1969
+@@ -1,4 +0,0 @@
+-
+-/* mail: Handler for sending mail. */
+-$this->registry['mail']['compose'] = 'imp';
+-$this->registry['mail']['composePopup'] = 'imp';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120ContactsHandler
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120ContactsHandler:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120ContactsHandler:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120ContactsHandler:1.1	Tue Apr  9 13:43:29 2002
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/120ContactsHandler	Wed Dec 31 19:00:00 1969
+@@ -1,6 +0,0 @@
+-
+-/* contacts: Handler for contacts management. */
+-$this->registry['contacts']['search'] = 'turba';
+-$this->registry['contacts']['add'] = 'turba';
+-$this->registry['contacts']['sources'] = 'turba';
+-$this->registry['contacts']['fields'] = 'turba';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200AppRegistryHorde
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200AppRegistryHorde:1.2 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200AppRegistryHorde:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200AppRegistryHorde:1.2	Wed Apr 23 11:24:25 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/200AppRegistryHorde	Wed Dec 31 19:00:00 1969
+@@ -1,37 +0,0 @@
+-/**
+- * Application registry
+- * --------------------
+- * The following settings register installed Horde applications.
+- * By default, Horde assumes that the application directories live
+- * inside the horde directory.
+- *
+- * Attribute     Type     Description
+- * ---------     ----     -----------
+- * fileroot      string   The base filesystem path for the module's files
+- * webroot       string   The base URI for the module
+- * icon          string   The URI for an icon to show in menus for the module
+- * name          string   The name used menus and descriptions for a module
+- * allow_guests  boolean  Allow guests, or only logged in users, access?
+- * status        string   'inactive', 'hidden', 'notoolbar', or 'active'.
+- *
+- * The following attributes are only valid for the "horde" entry
+- *
+- * initial_page  string   The initial (default) page (filename) for the module
+- * templates     string   The filesystem path to the templates directory
+- *
+- */
+-
+-$this->applications['horde'] = array(
+-    'fileroot' => dirname(__FILE__) . '/..',
+-    'webroot' => '/horde',
+-    'initial_page' => 'login.php',
+-    'icon' => '/horde/graphics/home.gif',
+-    'name' => _("Horde"),
+-    'allow_guests' => true,
+-    'status' => 'active',
+-    'templates' => dirname(__FILE__) . '/../templates',
+-    'cookie_domain' => $_SERVER['SERVER_NAME'],
+-    'cookie_path' => '/horde',
+-    'server_name' => $_SERVER['SERVER_NAME'],
+-    'server_port' => $_SERVER['SERVER_PORT']
+-);
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryImp
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryImp:1.3 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryImp:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryImp:1.3	Thu Apr 24 11:41:37 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/210AppRegistryImp	Wed Dec 31 19:00:00 1969
+@@ -1,9 +0,0 @@
+-
+-$this->applications['imp'] = array(
+-    'fileroot' => dirname(__FILE__) . '/../imp',
+-    'webroot' => $this->applications['horde']['webroot'] . '/imp',
+-    'icon' => $this->applications['horde']['webroot'] . '/imp/graphics/imp.gif',
+-    'name' => _("webmail"),
+-    'allow_guests' => false,
+-    'status' => 'active'
+-);
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300ServRegistryImp
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300ServRegistryImp:1.2 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300ServRegistryImp:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300ServRegistryImp:1.2	Wed Apr 23 11:24:26 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/300ServRegistryImp	Wed Dec 31 19:00:00 1969
+@@ -1,30 +0,0 @@
+-/** 
+- * Service registry
+- * ----------------
+- * The following entries register services for specific Horde
+- * applications. Unless you need to customize your Horde
+- * applications, you shouldn't touch this section.
+- */
+-
+-$this->services['imp']['auth']['login'] = array(
+-    'link' => "%application%/login.php?url=|url|"
+-);
+-$this->services['imp']['auth']['logout'] = array(
+-    'link' => "%application%/login.php?reason=logout&url=|url|"
+-);
+-$this->services['imp']['mail']['compose'] = array(
+-    'link' => "javascript:open_compose_win('popup=1&to=|to|&cc=|cc|&bcc=|bcc|&msg=|msg|&subject=|subject||extra|');",
+-    'includeFile' => '%application%/templates/javascript/open_compose_win.js',
+-);
+-$this->services['imp']['mail']['composePopup'] = array(
+-    'file' => '%application%/lib/api.php',
+-    'includeFile' => '%application%/templates/javascript/open_compose_win.js',
+-    'function' => 'impComposePopup',
+-    'args' => array('options')
+-);
+-$this->services['imp']['horde']['summary'] = array(
+-    'file' => '%application%/lib/api.php',
+-    'function' => 'impSummary',
+-    'args' => array(),
+-    'type' => 'string'
+-);
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350ServRegistryDefault
+diff -u e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350ServRegistryDefault:1.1 e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350ServRegistryDefault:removed
+--- e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350ServRegistryDefault:1.1	Wed Apr 23 11:24:26 2003
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/350ServRegistryDefault	Wed Dec 31 19:00:00 1969
+@@ -1,5 +0,0 @@
+-
+-$this->services['default']['mail']['compose'] = array(
+-    'link' => "mailto:%to%"
+-);
+-
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0:1.1
+--- /dev/null	Mon Apr 18 20:37:50 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0	Mon Apr 18 20:37:21 2005
+@@ -0,0 +1 @@
++PERMS=0540

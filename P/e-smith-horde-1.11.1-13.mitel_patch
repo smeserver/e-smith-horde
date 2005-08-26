@@ -1,0 +1,19 @@
+Index: e-smith-horde/createlinks
+diff -u e-smith-horde/createlinks:1.12 e-smith-horde/createlinks:1.14
+--- e-smith-horde/createlinks:1.12	Tue Jun 14 17:20:22 2005
++++ e-smith-horde/createlinks	Fri Jun 17 10:58:16 2005
+@@ -12,6 +12,13 @@
+ 	    ));
+ }
+ 
++foreach (qw(registry.php prefs.php mime_drivers.php))
++{
++    safe_symlink("/etc/e-smith/templates-default/template-begin-php",
++	"root/etc/e-smith/templates/home/httpd/html/horde/imp/config/$_/template-begin");
++    safe_symlink("/etc/e-smith/templates-default/template-end-php",
++	"root/etc/e-smith/templates/home/httpd/html/horde/imp/config/$_/template-end");
++}
+ 
+ #--------------------------------------------------
+ # actions for post-install event
+Index: e-smith-horde/e-smith-horde.spec

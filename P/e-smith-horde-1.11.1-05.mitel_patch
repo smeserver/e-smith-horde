@@ -1,0 +1,39 @@
+Index: e-smith-horde/createlinks
+diff -u e-smith-horde/createlinks:1.10 e-smith-horde/createlinks:1.11
+--- e-smith-horde/createlinks:1.10	Tue Apr 19 14:32:39 2005
++++ e-smith-horde/createlinks	Tue Apr 19 15:54:12 2005
+@@ -54,3 +54,6 @@
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+ }
+ 
++safe_symlink("/etc/e-smith/templates-default/template-begin-php",
++     "root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/template-begin");
++
+Index: e-smith-horde/e-smith-horde.spec
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/conf.php:1.1
+--- /dev/null	Tue Apr 19 15:54:48 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/conf.php	Tue Apr 19 15:54:12 2005
+@@ -0,0 +1,2 @@
++PERMS=0640
++GID="www"
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/horde.php
+diff -u e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/horde.php:1.1 e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/horde.php:removed
+--- e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/horde.php:1.1	Mon Apr 18 16:09:17 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/horde.php	Wed Dec 31 19:00:00 1969
+@@ -1,2 +0,0 @@
+-PERMS=0640
+-GID="www"
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php
+diff -u e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php:1.1 e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php:removed
+--- e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php:1.1	Mon Apr 18 16:09:17 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/mime_drivers.php	Wed Dec 31 19:00:00 1969
+@@ -1,2 +0,0 @@
+-PERMS=0640
+-GID="www"
+Index: e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php
+diff -u e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php:1.1 e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php:removed
+--- e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php:1.1	Mon Apr 18 16:09:17 2005
++++ e-smith-horde/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/registry.php	Wed Dec 31 19:00:00 1969
+@@ -1,2 +0,0 @@
+-PERMS=0640
+-GID="www"

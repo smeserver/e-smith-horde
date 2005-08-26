@@ -1,0 +1,13 @@
+Index: e-smith-horde/e-smith-horde.spec
+diff -u e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess:1.6 e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess:1.7
+--- e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess:1.6	Mon Apr 18 20:37:20 2005
++++ e-smith-horde/root/etc/e-smith/templates/etc/httpd/conf/httpd.conf/85HordeAccess	Sun May  1 18:45:09 2005
+@@ -26,7 +26,7 @@
+     order allow,deny
+     allow from all
+     AddType application/x-httpd-php .php .php3
+-    php_value include_path	'.:/usr/share/pear'
++    php_value include_path	'/usr/share/pear-addons:/usr/share/pear'
+ #    php_value auto_prepend_file /home/httpd/horde-phplib/prepend.php3
+     php_flag  magic_quotes_gpc	off
+     php_flag  track_vars	on

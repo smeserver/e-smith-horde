@@ -1,0 +1,191 @@
+Index: e-smith-horde/createlinks
+diff -u e-smith-horde/createlinks:1.9 e-smith-horde/createlinks:1.10
+--- e-smith-horde/createlinks:1.9	Mon Apr 18 20:37:20 2005
++++ e-smith-horde/createlinks	Tue Apr 19 14:32:39 2005
+@@ -44,10 +44,10 @@
+     "/home/httpd/html/horde/scripts/db/mysql_set_password.sql",
+     $event);
+ foreach (qw(
+-    20mysql_migrate_horde.sql
+-    30mysql_create_tables.sql
+-    21horde.mysql_set_password.sql
+-    40mysql_create_indexes.sql
++    20mysql_migrate_horde
++    30mysql_create_tables
++    21horde.mysql_set_password
++    40mysql_create_indexes
+     75horde-2.2_to_3.0
+     ))
+ {
+Index: e-smith-horde/e-smith-horde.spec
+diff -u e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0:1.1 e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0:1.2
+--- e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0:1.1	Mon Apr 18 20:37:20 2005
++++ e-smith-horde/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0	Tue Apr 19 14:32:39 2005
+@@ -1,3 +1,4 @@
+ #! /bin/sh
+ 
+-exec mysql < /home/httpd/html/horde/scripts/upgrades/2.2_to_3.0.mysql.sql
++test -f /var/lib/mysql/horde/horde_vfs.frm && exit 0
++exec mysql horde < /home/httpd/html/horde/scripts/upgrades/2.2_to_3.0.mysql.sql
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,2 @@
++/* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
++// $Horde: horde/config/conf.xml,v 1.74.2.5 2005/03/22 11:40:14 jan Exp $
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,13 @@
++// 100GeneralSettings
++$conf['debug_level'] = E_ALL;
++$conf['max_exec_time'] = 0;
++$conf['use_ssl'] = 2;
++$conf['server']['name'] = $_SERVER['SERVER_NAME'];
++$conf['server']['port'] = $_SERVER['SERVER_PORT'];
++$conf['compress_pages'] = true;
++$conf['umask'] = 077;
++$conf['session']['name'] = 'Horde';
++$conf['session']['cache_limiter'] = 'nocache';
++$conf['session']['timeout'] = 0;
++$conf['cookie']['domain'] = $_SERVER['SERVER_NAME'];
++$conf['cookie']['path'] = '/horde';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/110SQL
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/110SQL:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/110SQL	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,14 @@
++// 110SQL
++$conf['sql']['phptype'] = 'mysql';
++$conf['sql']['persistent'] = false;
++$conf['sql']['protocol'] = 'unix';
++$conf['sql']['hostspec'] = 'localhost';
++$conf['sql']['username'] = 'horde';
++{
++    $horderec = $DB->get('horde');
++    $horde_pw = $horderec->prop('DbPassword') || 'horde';
++    return '';
++}
++$conf['sql']['password'] = '{$horde_pw}';
++$conf['sql']['database'] = 'horde';
++$conf['sql']['charset'] = 'iso-8859-1';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/120Authentication
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/120Authentication:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/120Authentication	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,5 @@
++// 120Authentication
++$conf['auth']['admins'] = array('admin@{ $DomainName }');
++$conf['auth']['checkip'] = true;
++$conf['auth']['params']['app'] = 'imp';
++$conf['auth']['driver'] = 'application';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/130Signup
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/130Signup:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/130Signup	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,5 @@
++// 130Signup
++$conf['signup']['allow'] = false;
++$conf['signup']['approve'] = true;
++$conf['signup']['preprocess'] = false;
++$conf['signup']['queue'] = false;
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/140Logging
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/140Logging:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/140Logging	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,8 @@
++// 140Logging
++$conf['log']['priority'] = PEAR_LOG_NOTICE;
++$conf['log']['ident'] = 'HORDE';
++$conf['log']['params'] = array();
++$conf['log']['name'] = LOG_SYSLOG;
++$conf['log']['type'] = 'syslog';
++$conf['log']['enabled'] = true;
++$conf['log_accesskeys'] = false;
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/160PreferenceSystem
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/160PreferenceSystem:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/160PreferenceSystem	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,8 @@
++// 160PreferenceSystem
++$conf['prefs']['params']['table'] = 'horde_prefs';
++$conf['prefs']['params']['driverconfig'] = 'horde';
++$conf['prefs']['driver'] = 'sql';
++$conf['datatree']['params']['table'] = 'horde_datatree';
++$conf['datatree']['params']['driverconfig'] = 'horde';
++$conf['datatree']['driver'] = 'sql';
++$conf['group']['driver'] = 'datatree';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/200CacheSystem
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/200CacheSystem:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/200CacheSystem	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,5 @@
++// 200CacheSystem
++$conf['cache']['default_lifetime'] = 1800;
++$conf['cache']['params']['dir'] = Horde::getTempDir();
++$conf['cache']['driver'] = 'file';
++$conf['token']['driver'] = 'none';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/220Mailer
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/220Mailer:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/220Mailer	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,4 @@
++// 220Mailer
++$conf['mailer']['type'] = 'smtp';
++$conf['mailer']['params'] = array();
++$conf['mailer']['params'] = array('server' => 'mail.{ $DomainName }');
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/230VirtualFileStorage
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/230VirtualFileStorage:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/230VirtualFileStorage	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,4 @@
++// 230VirtualFileStorage
++$conf['vfs']['params']['vfsroot'] = '/tmp';
++$conf['vfs']['type'] = 'file';
++$conf['sessionhandler']['type'] = 'none';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/240ProblemReporting
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/240ProblemReporting:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/240ProblemReporting	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,3 @@
++// 240ProblemReporting
++$conf['problems']['enabled'] = false;
++$conf['problems']['email'] = 'admin@{ $DomainName }';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/300MenuSettings
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/300MenuSettings:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/300MenuSettings	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,7 @@
++// 300MenuSettings
++$conf['menu']['always'] = false;
++$conf['menu']['links']['help'] = 'all';
++$conf['menu']['links']['options'] = 'authenticated';
++$conf['menu']['links']['problem'] = 'never';
++$conf['menu']['links']['login'] = 'all';
++$conf['menu']['links']['logout'] = 'authenticated';
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,5 @@
++// 320Hooks
++$conf['hooks']['username'] = false;
++$conf['hooks']['preauthenticate'] = false;
++$conf['hooks']['postauthenticate'] = false;
++$conf['hooks']['authldap'] = false;
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/340Kolab
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/340Kolab:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/340Kolab	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,2 @@
++// 340Kolab
++$conf['kolab']['enabled'] = false;
+Index: e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/999footer
+diff -u /dev/null e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/999footer:1.1
+--- /dev/null	Tue Apr 19 14:33:14 2005
++++ e-smith-horde/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/999footer	Tue Apr 19 14:32:40 2005
+@@ -0,0 +1,2 @@
++// 999Footer
++/* CONFIG END. DO NOT CHANGE ANYTHING IN OR BEFORE THIS LINE. */
