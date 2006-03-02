@@ -1,0 +1,11 @@
+diff -ruN e-smith-horde-1.11.1/createlinks e-smith-horde-1.11.26/createlinks
+--- e-smith-horde-1.11.1/createlinks	2006-02-23 11:53:37.000000000 -0600
++++ e-smith-horde-1.11.26/createlinks	2006-02-23 11:51:57.000000000 -0600
+@@ -9,6 +9,7 @@
+     templates2events("/home/httpd/html/horde/config/$_", qw(
+ 	    bootstrap-console-save
+ 	    console-save
++            email-update
+ 	    ));
+ }
+ 
