@@ -2,12 +2,13 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.12.0
-%define release 01
+%define release 02
 Version: %{version}
 Release: %{release}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
+Patch0: e-smith-horde-1.12.0-02.horde3.10.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -24,6 +25,9 @@ AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 
 %changelog
+* Wed Apr 05 2006 John H> Bennett III <bennettj@johnbennettservices.com> 1.12.0-02
+- Patch that incorporates the updates for horde 3.0.10 [SME: 1157]
+
 * Wed Mar 15 2006 Charlie Brady <charlie_brady@mitel.com> 1.12.0-01
 - Roll stable stream version. [SME: 1016]
 
@@ -582,6 +586,7 @@ horde specific configuration items.
 
 %prep
 %setup
+%patch0 -p1
 
 %build
 for i in post-install post-upgrade
