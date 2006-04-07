@@ -25,7 +25,7 @@ AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 
 %changelog
-* Wed Apr 05 2006 John H> Bennett III <bennettj@johnbennettservices.com> 1.12.0-02
+* Wed Apr 05 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-02
 - Patch that incorporates the updates for horde 3.0.10 [SME: 1157]
 
 * Wed Mar 15 2006 Charlie Brady <charlie_brady@mitel.com> 1.12.0-01
