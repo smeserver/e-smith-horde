@@ -27,7 +27,7 @@ Obsoletes: dcb-e-smith-horde
 
 %changelog
 * Thu Jul 06 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-03
-- Template patch to 00header that incorporates the updates for horde 3.0.11 [SME: 1710]
+- Template patch to 00header that incorporates the updates for horde 3.0.11 [SME: 1846]
 
 * Wed Apr 05 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-02
 - Patch that incorporates the updates for horde 3.0.10 [SME: 1157]
