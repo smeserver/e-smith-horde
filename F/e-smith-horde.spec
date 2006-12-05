@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.12.0
-%define release 04
+%define release 05
 Version: %{version}
 Release: %{release}
 License: GPL
@@ -11,6 +11,7 @@ Source: %{name}-%{version}.tar.gz
 Patch0: e-smith-horde-1.12.0-02.horde3.10.patch
 Patch1: e-smith-horde-1.12.0-03.horde3.0.11.patch
 Patch2: e-smith-horde-1.12.0-04.mysql_update_privs.patch
+Patch3: e-smith-horde-1.12.0-05.horde_db.patch
 Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
@@ -27,6 +28,9 @@ AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 
 %changelog
+* Tue Dec 5 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-05
+- Added additional directive to 85HordeAccess to fix a security issue.
+
 * Thu Nov 9 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-04
 - Added a new mysql.init event to upgrade the horde user privileges for the horde DB. [SME: 423]
 
@@ -597,6 +601,7 @@ horde specific configuration items.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 for i in post-install post-upgrade
