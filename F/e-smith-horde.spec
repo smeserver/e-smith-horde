@@ -2,9 +2,10 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.12.0
-%define release 05
+%define release 6
 Version: %{version}
-Release: %{release}
+Release: %smerelease %{release}
+Packager: %{_packager}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
@@ -12,7 +13,6 @@ Patch0: e-smith-horde-1.12.0-02.horde3.10.patch
 Patch1: e-smith-horde-1.12.0-03.horde3.0.11.patch
 Patch2: e-smith-horde-1.12.0-04.mysql_update_privs.patch
 Patch3: e-smith-horde-1.12.0-05.horde_db.patch
-Packager: e-smith developers <bugs@e-smith.com>
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -28,6 +28,10 @@ AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 
 %changelog
+* Thu Dec 07 2006 Shad L. Lords <slords@mail.com>
+- Update to new release naming.  No functional changes.
+- Make Packager generic
+
 * Tue Dec 5 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-05
 - Added additional directive to 85HordeAccess to fix a security issue.
 
