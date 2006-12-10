@@ -1,0 +1,10 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/home/httpd/html/horde/scripts/db/mysql_create_indexes.sql mezzanine_patched_e-smith-horde-1.13.0/root/home/httpd/html/horde/scripts/db/mysql_create_indexes.sql
+--- e-smith-horde-1.13.0/root/home/httpd/html/horde/scripts/db/mysql_create_indexes.sql	2002-10-03 14:35:07.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/home/httpd/html/horde/scripts/db/mysql_create_indexes.sql	2006-10-02 22:31:01.000000000 -0500
+@@ -5,3 +5,6 @@
+ CREATE INDEX category_user_idx ON horde_categories (user_uid);
+ CREATE INDEX category_serialized_idx ON horde_categories (category_serialized);
+ 
++CREATE INDEX pref_uid_idx ON horde_prefs (pref_uid);
++CREATE INDEX pref_scope_idx ON horde_prefs (pref_scope);
++

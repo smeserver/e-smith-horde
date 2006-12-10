@@ -1,0 +1,68 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/createlinks mezzanine_patched_e-smith-horde-1.13.0/createlinks
+--- e-smith-horde-1.13.0/createlinks	2006-03-15 17:51:24.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/createlinks	2006-09-10 19:12:32.000000000 -0500
+@@ -33,10 +33,11 @@
+ 
+ foreach (qw(
+     20mysql_migrate_horde
+-    30mysql_create_tables
+     21horde.mysql_set_password
+-    40mysql_create_indexes
+-    75horde-2.2_to_3.0
++    30horde_mysql_create_tables
++    40horde_mysql_create_indexes
++    50horde-2.2_to_3.0
++    55horde-3.0_to_3.1
+     ))
+ {
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+@@ -53,10 +54,11 @@
+     $event);
+ foreach (qw(
+     20mysql_migrate_horde
+-    30mysql_create_tables
+     21horde.mysql_set_password
+-    40mysql_create_indexes
+-    75horde-2.2_to_3.0
++    30horde_mysql_create_tables
++    40horde_mysql_create_indexes
++    50horde-2.2_to_3.0
++    55horde-3.0_to_3.1
+     ))
+ {
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30horde_mysql_create_tables mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30horde_mysql_create_tables
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30horde_mysql_create_tables	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30horde_mysql_create_tables	2005-04-18 17:01:14.000000000 -0500
+@@ -0,0 +1 @@
++PERMS=0540
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30mysql_create_tables mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30mysql_create_tables
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30mysql_create_tables	2005-04-18 17:01:14.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/30mysql_create_tables	1969-12-31 18:00:00.000000000 -0600
+@@ -1 +0,0 @@
+-PERMS=0540
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40horde_mysql_create_indexes mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40horde_mysql_create_indexes
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40horde_mysql_create_indexes	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40horde_mysql_create_indexes	2005-04-18 17:01:14.000000000 -0500
+@@ -0,0 +1 @@
++PERMS=0540
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40mysql_create_indexes mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40mysql_create_indexes
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40mysql_create_indexes	2005-04-18 17:01:14.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/40mysql_create_indexes	1969-12-31 18:00:00.000000000 -0600
+@@ -1 +0,0 @@
+-PERMS=0540
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/50horde-2.2_to_3.0 mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/50horde-2.2_to_3.0
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/50horde-2.2_to_3.0	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/50horde-2.2_to_3.0	2006-03-15 17:51:23.000000000 -0600
+@@ -0,0 +1 @@
++PERMS=0540
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/55horde-3.0_to_3.1 mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/55horde-3.0_to_3.1
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/55horde-3.0_to_3.1	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/55horde-3.0_to_3.1	2006-09-10 19:15:00.000000000 -0500
+@@ -0,0 +1 @@
++PERMS=0540
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0 mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/75horde-2.2_to_3.0	1969-12-31 18:00:00.000000000 -0600
+@@ -1 +0,0 @@
+-PERMS=0540

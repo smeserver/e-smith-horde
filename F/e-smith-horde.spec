@@ -1,18 +1,28 @@
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
-%define version 1.12.0
-%define release 6
+%define version 1.13.0
+%define release 15
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch0: e-smith-horde-1.12.0-02.horde3.10.patch
-Patch1: e-smith-horde-1.12.0-03.horde3.0.11.patch
-Patch2: e-smith-horde-1.12.0-04.mysql_update_privs.patch
-Patch3: e-smith-horde-1.12.0-05.horde_db.patch
+Patch0: e-smith-horde-1.13.0-02.conf_php.patch
+Patch1: e-smith-horde-1.13.0-03.mime_drivers_php.patch
+Patch2: e-smith-horde-1.13.0-04.prefs_php.patch
+Patch3: e-smith-horde-1.13.0-05.registry_php.patch
+Patch4: e-smith-horde-1.13.0-06.mysql_init.patch
+Patch5: e-smith-horde-1.13.0-07.createlinks_metadata.patch 
+Patch6: e-smith-horde-1.13.0-08.30horde_mysql_create_tables.patch
+Patch8: e-smith-horde-1.13.0-09.horde_menu_array.patch
+Patch9: e-smith-horde-1.13.0-10.mimp.patch
+Patch10: e-smith-horde-1.13.0-11.40horde_mysql_create_indexes.patch
+Patch11: e-smith-horde-1.13.0-12.horde_registry_php_modification.patch
+Patch12: e-smith-horde-1.13.0-13.mysql_update_privs.patch
+Patch13: e-smith-horde-1.13.0-14.inline_path_change.patch
+Patch14: e-smith-horde-1.13.0-15.horde_db.patch  
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -23,23 +33,90 @@ Requires: php-gd
 Requires: php-mbstring
 Requires: wv
 Requires: xlhtml
+Requires: horde >= 3.1
 BuildRequires: e-smith-devtools >= 1.13.1-03
 AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
+Obsoletes: smeserver-horde-menuarray
 
 %changelog
-* Thu Dec 07 2006 Shad L. Lords <slords@mail.com>
+* Sat Dec 09 2006 Shad L. Lords <slords@mail.com>
 - Update to new release naming.  No functional changes.
 - Make Packager generic
 
-* Tue Dec 5 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-05
+* Tue Dec 5 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-15
 - Added additional directive to 85HordeAccess to fix a security issue.
 
-* Thu Nov 9 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-04
-- Added a new mysql.init event to upgrade the horde user privileges for the horde DB. [SME: 423]
+* Fri Nov 25 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-14
+- Patch that changes the inline viewer path for excel and powerpoint.  Inline viewers
+  are still defaulted to false.
+
+* Thu Nov 09 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-13
+- Patch that moves the mysql.init call for 77mysql_update_privs from smeserver-kronolith
+  to e-smith-horde
+
+* Thu Oct 5 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-12
+- Removed imp, ingo, and turba specific horde/config/registry.php settings and moved
+  them to their own specific e-smith RPMs.
+
+
+* Mon Oct 2 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-11
+- Patch to 40horde_mysql_create_indexes which will now create the indexes for the
+  horde_prefs table.
+
+* Thu Sep 28 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-10
+- Added code to the horde/conf.php/125Authentication template that will use the 
+  horde composite driver if mimp is installed and status set to enabled.  The
+  Composite driver is needed so horde can login to either imp or mimp.
+- Added 999mimp template to horde/config/conf.php that will check if mimp is 
+  configured as a service and enabled.  If so, then the composite authentication 
+  driver will be used so that mimp and imp can coexist.  Otherwise imp will be 
+  used for authentication. The composite driver information appears below the 
+  footer like the example from http://wiki.horde.org/MIMPHowTo?referrer=AuthCompositeHowTo
+  To activate - config set mimp service status enabled|disabled.  Disabled by default.
+  signal-event email-update
+
+* Wed Sep 27 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-09
+- Added code so that what I am calling the horde menuarray can be enabled or 
+  disabled globally for all potential horde add-on modules via a db property.  
+  config setprop horde MenuArray disabled|enabled.  Enabled by default.
+  If enabled, all horde add-on module icons will be visible in the webmail view.
+  Each individual horde module can also be set to display or not to display in the 
+  array as well.  See specific add-on module RPM for more information.
+
+* Wed Sep 27 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-08
+- Patch to update the horde mysql creation of tables and indexes for horde 3.1.x
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-07
+- Patch to createlinks and templates.metadata files to reflect updated names from
+  patch 6
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-06
+- Patch to update and rename mysql.init calls so they can be identified with horde
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-05
+- Patch to update horde templates in registry.php for horde 3.1.x
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-04
+- Patch to update horde templates in prefs.php for horde 3.1.x
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-03
+- Patch to update horde templates in mime_drivers.php for horde 3.1.x
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-02
+- Patch to update horde templates in conf.php for horde 3.1.x
+- Added an 120AdminAuthentication section which adds admin@primary_domain as a horde
+  administrator which now needs to be used to grant various permissions in horde 3.1.x
+
+* Mon Sep 11 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-01
+- Roll development stream for horde 3.1.x
+
+* Thu Jul 20 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-04
+- Removed Nag, Mnemo, Kronolith, Mimp, Gollem, and Trean template fragments from
+  registry.php so they can be included with their own specific smeserver- RPM's. [SME: 1742]
 
 * Thu Jul 06 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-03
-- Template patch to 00header that incorporates the updates for horde 3.0.11 [SME: 1846]
+- Template patch to 00header that incorporates the updates for horde 3.0.11 [SME: 1710]
 
 * Wed Apr 05 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.12.0-02
 - Patch that incorporates the updates for horde 3.0.10 [SME: 1157]
@@ -606,6 +683,16 @@ horde specific configuration items.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
 
 %build
 for i in post-install post-upgrade
