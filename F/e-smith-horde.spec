@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.13.0
-%define release 15
+%define release 16
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -23,6 +23,7 @@ Patch11: e-smith-horde-1.13.0-12.horde_registry_php_modification.patch
 Patch12: e-smith-horde-1.13.0-13.mysql_update_privs.patch
 Patch13: e-smith-horde-1.13.0-14.inline_path_change.patch
 Patch14: e-smith-horde-1.13.0-15.horde_db.patch  
+Patch15: e-smith-horde-1.13.0-16.horde_upgrade.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -40,12 +41,16 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Sun Dec 24 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-16
+- Patch that corrects the duplicate column errors on new 7.1 installs and
+  upgrades from SME 7.0 to 7.1.  [SME: 2190]
+
 * Sat Dec 09 2006 Shad L. Lords <slords@mail.com>
 - Update to new release naming.  No functional changes.
 - Make Packager generic
 
 * Tue Dec 5 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-15
-- Added additional directive to 85HordeAccess to fix a security issue.
+- Added additional directive to 85HordeAccess to fix a security issue.  [SME: 2136]
 
 * Fri Nov 25 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-14
 - Patch that changes the inline viewer path for excel and powerpoint.  Inline viewers
@@ -693,6 +698,7 @@ horde specific configuration items.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %build
 for i in post-install post-upgrade
