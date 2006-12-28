@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.13.0
-%define release 16
+%define release 18
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -24,6 +24,8 @@ Patch12: e-smith-horde-1.13.0-13.mysql_update_privs.patch
 Patch13: e-smith-horde-1.13.0-14.inline_path_change.patch
 Patch14: e-smith-horde-1.13.0-15.horde_db.patch  
 Patch15: e-smith-horde-1.13.0-16.horde_upgrade.patch
+Patch16: e-smith-horde-1.13.0-17.horde_create_indexes_2.patch
+Patch17: e-smith-horde-1.13.0-18.horde_administration.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -41,6 +43,15 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Wed Dec 27 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-18
+- Patch to add a DB entry that will enable the Horde Administration menu to be visible 
+  for the Admin user.  To use (config setprop horde Administration enabled followed by 
+  signal-event email-update or expand-template /home/httpd/html/horde/config/conf.php).  [SME: 2191]
+
+* Wed Dec 27 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-17
+- Patch that corrects the duplicate index errors seen when installing or upgrading
+  to SME 7.1.  [SME: 2194]
+
 * Sun Dec 24 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-16
 - Patch that corrects the duplicate column errors on new 7.1 installs and
   upgrades from SME 7.0 to 7.1.  [SME: 2190]
@@ -699,6 +710,8 @@ horde specific configuration items.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
+%patch17 -p1
 
 %build
 for i in post-install post-upgrade
