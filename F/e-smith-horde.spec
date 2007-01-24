@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.13.0
-%define release 18
+%define release 19
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -26,6 +26,7 @@ Patch14: e-smith-horde-1.13.0-15.horde_db.patch
 Patch15: e-smith-horde-1.13.0-16.horde_upgrade.patch
 Patch16: e-smith-horde-1.13.0-17.horde_create_indexes_2.patch
 Patch17: e-smith-horde-1.13.0-18.horde_administration.patch
+Patch18: e-smith-horde-1.13.0-19.horde_mysql_init_rename.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -43,6 +44,10 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Tue Jan 23 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-19
+- This patch renames the last remaining mysql.init event tied to horde so that now
+  all of the events pertaining to horde are clearly identified. [SME: 1363]
+
 * Wed Dec 27 2006 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-18
 - Patch to add a DB entry that will enable the Horde Administration menu to be visible 
   for the Admin user.  To use (config setprop horde Administration enabled followed by 
@@ -712,6 +717,7 @@ horde specific configuration items.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %build
 for i in post-install post-upgrade
