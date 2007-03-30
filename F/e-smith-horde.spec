@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.13.0
-%define release 19
+%define release 20
 Version: %{version}
 Release: %smerelease %{release}
 Packager: %{_packager}
@@ -27,6 +27,7 @@ Patch15: e-smith-horde-1.13.0-16.horde_upgrade.patch
 Patch16: e-smith-horde-1.13.0-17.horde_create_indexes_2.patch
 Patch17: e-smith-horde-1.13.0-18.horde_administration.patch
 Patch18: e-smith-horde-1.13.0-19.horde_mysql_init_rename.patch
+Patch19: e-smith-horde-1.13.0-20.horde_314.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -44,6 +45,9 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Sun Mar 25 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-20
+- Updated horde conf.php, prefs.php, and registry.php, per horde 3.1.4 [SME: 2783]
+
 * Tue Jan 23 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-19
 - This patch renames the last remaining mysql.init event tied to horde so that now
   all of the events pertaining to horde are clearly identified. [SME: 1363]
@@ -718,6 +722,7 @@ horde specific configuration items.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 %build
 for i in post-install post-upgrade
