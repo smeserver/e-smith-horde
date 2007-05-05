@@ -4,8 +4,7 @@ Name: %{name}
 %define version 1.13.0
 %define release 20
 Version: %{version}
-Release: %smerelease %{release}
-Packager: %{_packager}
+Release: %{release}%{?dist}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
@@ -45,6 +44,9 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Sun Apr 29 2007 Shad L. Lords <slords@mail.com>
+- Clean up spec so package can be built by koji/plague
+
 * Sun Mar 25 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-20
 - Updated horde conf.php, prefs.php, and registry.php, per horde 3.1.4 [SME: 2783]
 
