@@ -39,7 +39,7 @@ Requires: wv
 Requires: xlhtml
 Requires: horde >= 3.1
 Requires: php-pear
-%if "%{?rhel5}" == "5"
+%if "%{?rhel}" == "5"
 Obsoletes: pear-date
 Obsoletes: pear-db
 Obsoletes: pear-file
