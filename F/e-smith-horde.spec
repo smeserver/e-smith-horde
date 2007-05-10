@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.13.0
-%define release 20
+%define release 21
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -38,12 +38,38 @@ Requires: php-mbstring
 Requires: wv
 Requires: xlhtml
 Requires: horde >= 3.1
+Requires: php-pear
+%if "%{?rhel5}" == "5"
+Obsoletes: pear-date
+Obsoletes: pear-db
+Obsoletes: pear-file
+Obsoletes: pear-log
+Obsoletes: pear-mail
+Obsoletes: pear-mail_mime
+Requires: php-pear(Date)
+Requires: php-pear(File)
+Requires: php-pear(HTTP)
+Requires: php-pear(Log)
+Requires: php-pear(Services_Weather)
+Requires: php-pecl(Fileinfo)
+%else
+Requires: pear-date
+Requires: pear-db
+Requires: pear-file
+Requires: pear-log
+Requires: pear-mail
+Requires: pear-mail_mime
+%endif
 BuildRequires: e-smith-devtools >= 1.13.1-03
 AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Wed May 9 2007 Shad L. Lords <slords@mail.com> 1.13.0-21
+- Updates to support SME Server 8
+- Include pear modules from e-smith-imp and e-smith-info
+
 * Sun Apr 29 2007 Shad L. Lords <slords@mail.com>
 - Clean up spec so package can be built by koji/plague
 
