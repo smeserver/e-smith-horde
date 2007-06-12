@@ -1,0 +1,134 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/events/actions/horde_create_indexes mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/events/actions/horde_create_indexes
+--- e-smith-horde-1.13.0/root/etc/e-smith/events/actions/horde_create_indexes	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/events/actions/horde_create_indexes	2006-12-27 01:22:35.000000000 -0600
+@@ -0,0 +1,121 @@
++#!/usr/bin/perl -w
++#----------------------------------------------------------------------
++# copyright (C) 2002-2005 Mitel Networks Corporation
++# 
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++# 		
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++# 		
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
++# 
++# Technical support for this program is available from Mitel Networks 
++# Please visit our web site www.mitel.com/sme/ for details.
++#----------------------------------------------------------------------
++
++use strict;
++use DBI;
++use esmith::ConfigDB;
++use esmith::util;
++
++# Exit early if there is nothing to do
++die("horde db must exist") unless ( -d "/var/lib/mysql/horde/");
++die("horde_prefs db must exist") unless ( -f "/var/lib/mysql/horde/horde_prefs.frm");
++die("horde_categories db must exist") unless ( -f "/var/lib/mysql/horde/horde_categories.frm");
++
++
++# This is a translation of the script 'mysql_upgrade_1.1_to_1.2.sql
++# that is safe to run multiple times, and which can be run on a 1.2
++# installation without barfing.
++# Modified 12-27-06 by John H. Bennett III to accommodate the creation of some horde indexes.
++
++my $conf = esmith::ConfigDB->open_ro 
++    or die "Can't open configuration database: $!\n";
++our $username       = 'root';
++our $password       = esmith::util::LdapPassword();
++our $HORDE_DATABASE = 'horde';
++our $dbi_options = {RaiseError => 1, ChopBlanks => 1, AutoCommit => 1};
++
++my $db_hordehandle = DBI->connect
++		   ("DBI:mysql:$HORDE_DATABASE",
++		     $username, $password, $dbi_options )
++		     || die ("Connection error: $DBI::errstr");
++
++
++# We now need to create some columns, but we need to first check
++# whether they exist already
++my $sth = $db_hordehandle->prepare("show index from horde_prefs");
++$sth->execute;
++my $horde_prefs = $sth->fetchall_hashref('Key_name');
++
++my $sth1 = $db_hordehandle->prepare("show columns from horde_categories");
++$sth1->execute;
++my $horde_categories = $sth1->fetchall_hashref('Field');
++
++#Create an index for pref_uid if needed
++unless (defined $horde_prefs->{pref_uid_idx})
++{
++    my $statement = 'alter table horde_prefs ' .
++                    'add index pref_uid_idx (pref_uid)';
++    $statement = $db_hordehandle->prepare($statement) or
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr"; 
++} 
++
++# Create an index for pref_scope if needed 
++unless (defined $horde_prefs->{pref_scope_idx})
++{
++    my $statement = 'alter table horde_prefs ' .
++                    'add index pref_scope_idx (pref_scope)';
++    $statement = $db_hordehandle->prepare($statement) or
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr";
++}
++
++# Create an index for category_name if needed
++unless ($horde_categories->{category_name}->{Key})
++{
++    my $statement = 'alter table horde_categories ' .
++                    'add index category_category_name_idx (category_name)';
++    $statement = $db_hordehandle->prepare($statement) or
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr";
++}
++
++# Create an index for group_uid if needed
++unless ($horde_categories->{group_uid}->{Key})
++{
++    my $statement = 'alter table horde_categories ' .
++                    'add index category_group_idx (group_uid)';
++    $statement = $db_hordehandle->prepare($statement) or
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr";
++}
++
++# Create an index for user_uid if needed
++unless ($horde_categories->{user_uid}->{Key})
++{
++    my $statement = 'alter table horde_categories ' .
++                    'add index category_user_idx (user_uid)';
++    $statement = $db_hordehandle->prepare($statement) or
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr";
++}
++
++# Create an index for category_serialized if needed
++unless ($horde_categories->{category_serialized}->{Key})
++{
++    my $statement = 'alter table horde_categories ' .
++                    'add index category_serialized_idx (category_serialized)';
++    $statement = $db_hordehandle->prepare($statement) or
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr";
++}
++
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes	2006-12-27 01:38:31.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes	2006-12-27 01:32:17.000000000 -0600
+@@ -1,4 +1,3 @@
+ #! /bin/sh
+ 
+-test -f /var/lib/mysql/horde/horde_histories.frm && exit 0
+-exec mysql < /home/httpd/html/horde/scripts/db/mysql_create_indexes.sql
++exec /etc/e-smith/events/actions/horde_create_indexes

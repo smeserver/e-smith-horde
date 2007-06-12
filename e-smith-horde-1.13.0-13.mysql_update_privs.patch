@@ -1,0 +1,31 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/createlinks mezzanine_patched_e-smith-horde-1.13.0/createlinks
+--- e-smith-horde-1.13.0/createlinks	2006-11-09 22:46:38.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/createlinks	2006-11-09 22:45:07.000000000 -0600
+@@ -49,6 +49,7 @@
+     40horde_mysql_create_indexes
+     50horde-2.2_to_3.0
+     55horde-3.0_to_3.1
++    77mysql_update_privs
+     ))
+ {
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+@@ -70,6 +71,7 @@
+     40horde_mysql_create_indexes
+     50horde-2.2_to_3.0
+     55horde-3.0_to_3.1
++    77mysql_update_privs
+     ))
+ {
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/77mysql_update_privs mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/77mysql_update_privs
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/77mysql_update_privs	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/77mysql_update_privs	2006-11-09 22:45:48.000000000 -0600
+@@ -0,0 +1,3 @@
++#! /bin/sh
++
++exec mysql < /home/httpd/html/horde/scripts/db/mysql_update_privs.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/77mysql_update_privs mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/77mysql_update_privs
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/77mysql_update_privs	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates.metadata/etc/e-smith/sql/init/77mysql_update_privs	2006-11-09 22:45:19.000000000 -0600
+@@ -0,0 +1 @@
++PERMS=0540
