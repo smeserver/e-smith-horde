@@ -1,0 +1,36 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header	2006-09-10 18:18:26.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header	2006-09-10 13:19:18.000000000 -0500
+@@ -1,6 +1,6 @@
+ //00header
+ /**
+- * $Horde: horde/config/prefs.php.dist,v 1.85.2.3.2.1 2005/12/27 17:02:01 chuck Exp $
++ * $Horde: horde/config/prefs.php.dist,v 1.85.2.7 2006/06/22 18:47:55 chuck Exp $
+  *
+  * Preferences Information
+  * =======================
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal	2006-09-10 18:18:26.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal	2006-09-10 13:21:50.000000000 -0500
+@@ -130,6 +130,7 @@
+     'enum' => array(
+         '%x' => strftime('%x'),
+         '%Y-%m-%d' => strftime('%Y-%m-%d'),
++	'%d/%m/%Y' => strftime('%d/%m/%Y'),
+         '%A %B %d, %Y' => strftime('%A %B %d, %Y'),
+         '%A, %d. %B %Y' => strftime('%A, %d. %B %Y'),
+         '%A, %d %B %Y' => strftime('%A, %d %B %Y'),
+
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance  2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/300loginmaintenance2006-10-07 12:09:44.000000000 -0500
+@@ -6,7 +6,7 @@
+ // set 'value' false for do_maintenance.
+ // perform maintenance operations?
+ $_prefs['do_maintenance'] = array(
+-    'value' => true,
++    'value' => false,
+     'locked' => false,
+     'shared' => true,
+     'type' => 'checkbox',
+

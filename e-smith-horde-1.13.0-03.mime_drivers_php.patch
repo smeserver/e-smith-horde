@@ -1,0 +1,94 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	2006-03-15 17:51:24.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	2006-09-09 22:54:19.000000000 -0500
+@@ -1,6 +1,6 @@
+ // 00header
+ /**
+- * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.6 2005/09/30 20:52:16 chuck Exp $
++ * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.9 2006/04/06 21:32:14 jan Exp $
+  *
+  * Decide which output drivers you want to activate for all Horde
+  * applications. Individual Horde applications can override these settings
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/100mimedrivers	2006-09-10 09:40:12.000000000 -0500
+@@ -1,10 +1,13 @@
+ // 100mimedrivers
+ $mime_drivers_map['horde']['registered'] = array(
+-    'css', 'deb', 'enriched', 'enscript', 'html', 'images', 'msword',
+-    'msexcel', 'mspowerpoint', 'ooo', 'pdf', 'php', 'plain', 'rar', 'report',
+-    'rfc822', 'richtext', 'rpm', 'security', 'simple', 'srchighlite', 'tgz',
+-    'tnef', 'vcard', 'webcpp', 'zip');
+-
++    'css', 'enriched', 'html', 'images', 'ooo', 'pdf', 'php', 'plain', 'rar',
++    'report', 'rfc822', 'richtext', 'security', 'simple', 'tgz', 'tnef',
++    'vcard', 'zip',
++    // The following mime drivers require external applications to be
++    // installed.
++    // 'deb', 'enscript', 'msword', 'msexcel', 'mspowerpoint', 'rpm',
++    // 'srchighlite', 'webcpp'
++);
+ 
+ /**
+  * If you want to specifically override any MIME type to be handled by
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/120simple	2006-09-10 09:42:32.000000000 -0500
+@@ -2,6 +2,7 @@
+ /**
+  * Default text driver settings
+  */
++$mime_drivers['horde']['simple']['inline'] = true;
+ $mime_drivers['horde']['simple']['handles'] = array(
+     'text/*');
+ $mime_drivers['horde']['simple']['icons'] = array(
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/130plain	2006-09-10 09:43:17.000000000 -0500
+@@ -2,6 +2,7 @@
+ /**
+  * Plain text driver settings
+  */
++$mime_drivers['horde']['plain']['inline'] = true;
+ $mime_drivers['horde']['plain']['handles'] = array(
+     'text/plain');
+ $mime_drivers['horde']['plain']['icons'] = array(
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/250msword	2006-09-10 09:50:04.000000000 -0500
+@@ -12,8 +12,8 @@
+ $mime_drivers['horde']['msword']['handles'] = array(
+     'application/vnd.ms-word',
+     'application/msword',
+-    'application/rtf',
+-    'text/rtf');
++); 
+ $mime_drivers['horde']['msword']['icons'] = array(
+-    'default' => 'msword.png');
++    'default' => 'msword.png',
++);
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel	2006-03-15 17:51:24.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/260msexcel	2006-09-10 09:51:46.000000000 -0500
+@@ -4,7 +4,7 @@
+  * This driver requires xlhtml to be installed.
+  * xlhtml homepage: http://chicago.sourceforge.net/xlhtml/
+  */
+-$mime_drivers['horde']['msexcel']['location'] = '/usr/bin/xlhtml';
++$mime_drivers['horde']['msexcel']['location'] = '/usr/local/bin/xlhtml';
+ $mime_drivers['horde']['msexcel']['inline'] = false;
+ $mime_drivers['horde']['msexcel']['handles'] = array(
+     'application/vnd.ms-excel',
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint	2006-03-15 17:51:24.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/270mspowerpoint	2006-09-10 09:51:54.000000000 -0500
+@@ -4,7 +4,7 @@
+  * This driver requires ppthtml, included with xlhtml, to be installed.
+  * xlhtml homepage: http://chicago.sourceforge.net/xlhtml/
+  */
+-$mime_drivers['horde']['mspowerpoint']['location'] = '/usr/bin/ppthtml';
++$mime_drivers['horde']['mspowerpoint']['location'] = '/usr/local/bin/ppthtml';
+ $mime_drivers['horde']['mspowerpoint']['inline'] = false;
+ $mime_drivers['horde']['mspowerpoint']['handles'] = array(
+     'application/vnd.ms-powerpoint',

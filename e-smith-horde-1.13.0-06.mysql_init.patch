@@ -1,0 +1,54 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30horde_mysql_create_tables mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30horde_mysql_create_tables
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30horde_mysql_create_tables	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30horde_mysql_create_tables	2005-04-18 17:01:14.000000000 -0500
+@@ -0,0 +1,3 @@
++#! /bin/sh
++
++exec mysql < /home/httpd/html/horde/scripts/db/mysql_create_tables.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30mysql_create_tables mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30mysql_create_tables
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30mysql_create_tables	2005-04-18 17:01:14.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/30mysql_create_tables	1969-12-31 18:00:00.000000000 -0600
+@@ -1,3 +0,0 @@
+-#! /bin/sh
+-
+-exec mysql < /home/httpd/html/horde/scripts/db/mysql_create_tables.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40horde_mysql_create_indexes	2005-04-18 17:01:14.000000000 -0500
+@@ -0,0 +1,4 @@
++#! /bin/sh
++
++test -f /var/lib/mysql/horde/horde_histories.frm && exit 0
++exec mysql < /home/httpd/html/horde/scripts/db/mysql_create_indexes.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40mysql_create_indexes mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40mysql_create_indexes
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40mysql_create_indexes	2005-04-18 17:01:14.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/40mysql_create_indexes	1969-12-31 18:00:00.000000000 -0600
+@@ -1,4 +0,0 @@
+-#! /bin/sh
+-
+-test -f /var/lib/mysql/horde/horde_categories.frm && exit 0
+-exec mysql < /home/httpd/html/horde/scripts/db/mysql_create_indexes.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/50horde-2.2_to_3.0 mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/50horde-2.2_to_3.0
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/50horde-2.2_to_3.0	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/50horde-2.2_to_3.0	2006-03-15 17:51:23.000000000 -0600
+@@ -0,0 +1,4 @@
++#! /bin/sh
++
++test -f /var/lib/mysql/horde/horde_vfs.frm && exit 0
++exec mysql horde < /home/httpd/html/horde/scripts/upgrades/2.2_to_3.0.mysql.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/55horde-3.0_to_3.1 mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/55horde-3.0_to_3.1
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/55horde-3.0_to_3.1	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/55horde-3.0_to_3.1	2006-09-10 17:58:50.000000000 -0500
+@@ -0,0 +1,4 @@
++#! /bin/sh
++
++test -f /var/lib/mysql/horde/horde_histories.frm && exit 0
++exec mysql horde < /home/httpd/html/horde/scripts/upgrades/3.0_to_3.1.mysql.sql
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0 mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/etc/e-smith/sql/init/75horde-2.2_to_3.0	1969-12-31 18:00:00.000000000 -0600
+@@ -1,4 +0,0 @@
+-#! /bin/sh
+-
+-test -f /var/lib/mysql/horde/horde_vfs.frm && exit 0
+-exec mysql horde < /home/httpd/html/horde/scripts/upgrades/2.2_to_3.0.mysql.sql
