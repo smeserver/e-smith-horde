@@ -2,7 +2,7 @@ Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 1.13.0
-%define release 21
+%define release 22
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -27,6 +27,7 @@ Patch16: e-smith-horde-1.13.0-17.horde_create_indexes_2.patch
 Patch17: e-smith-horde-1.13.0-18.horde_administration.patch
 Patch18: e-smith-horde-1.13.0-19.horde_mysql_init_rename.patch
 Patch19: e-smith-horde-1.13.0-20.horde_314.patch
+Patch20: e-smith-horde-1.13.0-21.horde_315.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -66,6 +67,9 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Thu Nov 15 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-21
+- Updated horde registry.php template, per horde 3.1.5 [SME: 3572]
+
 * Wed May 9 2007 Shad L. Lords <slords@mail.com> 1.13.0-21
 - Updates to support SME Server 8
 - Include pear modules from e-smith-imp and e-smith-info
@@ -751,6 +755,7 @@ horde specific configuration items.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 %build
 for i in post-install post-upgrade
