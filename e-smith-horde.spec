@@ -67,7 +67,7 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
-* Thu Nov 15 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-21
+* Thu Nov 15 2007 John H. Bennett III <bennettj@johnbennettservices.com> 1.13.0-22
 - Updated horde registry.php template, per horde 3.1.5 [SME: 3572]
 
 * Wed May 9 2007 Shad L. Lords <slords@mail.com> 1.13.0-21
