@@ -1,0 +1,16 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde
+--- e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde       2008-03-16 22:33:52.000000000 -0500
++++ mezzanine_patched_e-smith-horde-1.13.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/110AppRegistryHorde2008-03-16 22:30:51.000000000 -0500
+@@ -3,7 +3,11 @@
+     'fileroot' => dirname(__FILE__) . '/..',
+     'webroot' => '/horde',
+     'initial_page' => 'login.php',
+-    'name' => _("Horde"),
++{
++    my $HordeName= $horde{'Name'} || 'Horde';
++
++    $OUT = qq(    'name' => _\("$HordeName"\),);
++}
+     'status' => 'active',
+     'templates' => dirname(__FILE__) . '/../templates',
+     'provides' => 'horde'
