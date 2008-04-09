@@ -1,3 +1,5 @@
+# $Id: e-smith-horde.spec,v 1.5 2008/04/09 13:51:48 slords Exp $
+
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
