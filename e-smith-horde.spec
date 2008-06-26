@@ -1,4 +1,4 @@
-# $Id: e-smith-horde.spec,v 1.6 2008/06/26 04:27:31 slords Exp $
+# $Id: e-smith-horde.spec,v 1.7 2008/06/26 04:29:33 slords Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
@@ -10,7 +10,7 @@ Release: %{release}%{?dist}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch1: horde-3.2.1_upgrade.patch 
+Patch1: e-smith-horde-3.2.1-header.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -48,7 +48,6 @@ BuildRequires: e-smith-devtools >= 1.13.1-03
 AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
-Obsoletes: e-smith-horde <= 2.0
 
 %changelog
 * Tue Jun 24 2008 John H. Bennett III <bennettj@johnbennettservices.com> 3.2-2
