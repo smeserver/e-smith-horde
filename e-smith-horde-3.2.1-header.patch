@@ -1,0 +1,57 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2008-06-07 21:09:05.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2008-06-15 16:47:00.000000000 -0500
+@@ -1,4 +1,4 @@
+ //00header
+ /* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
+-// $Horde: horde/config/conf.xml,v 1.74.2.66 2008/05/19 23:39:43 jan Exp $
++// $Horde: horde/config/conf.xml,v 1.74.2.69 2008/06/05 09:05:50 jan Exp $
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header	2008-05-26 18:50:23.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/00header	2008-06-15 19:37:25.000000000 -0500
+@@ -1,5 +1,5 @@
+ //00header
+ /**
+- * $Horde: horde/config/prefs.php.dist,v 1.85.2.10 2008/03/18 17:52:16 jan Exp $
++ * $Horde: horde/config/prefs.php.dist,v 1.85.2.11 2008/05/31 07:45:43 jan Exp $
+  */
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal	2008-05-26 18:53:53.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/prefs.php/200personal	2008-06-15 19:40:13.000000000 -0500
+@@ -246,7 +246,7 @@
+     'locked' => false,
+     'shared' => false,
+     'type' => 'number',
+-    'desc' => sprintf(_("Width of the %s menu on the left (takes effect on next log-in):"), $GLOBALS['registry']->get('name', 'horde'))
++    'desc' => sprintf(_("Width of the %s menu on the left:"), $GLOBALS['registry']->get('name', 'horde'))
+ );
+ 
+ $_prefs['moz_sidebar'] = array(
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header	2008-05-26 18:54:44.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header	2008-06-15 19:41:18.000000000 -0500
+@@ -2,7 +2,7 @@
+ /**
+  * registry.php -- Horde application registry.
+  *
+- * $Horde: horde/config/registry.php.dist,v 1.255.2.24 2008/03/27 18:07:06 chuck Exp $
++ * $Horde: horde/config/registry.php.dist,v 1.255.2.25 2008/05/25 21:39:05 chuck Exp $
+  *
+  * This configuration file is used by Horde to determine which Horde
+  * applications are installed and where, as well as how they interact.
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/780AppRegistrySwoosh	1969-12-31 18:00:00.000000000 -0600
+@@ -1,10 +0,0 @@
+-// 780AppRegistrySwoosh
+-$this->applications['swoosh'] = array(
+-    'fileroot' => dirname(__FILE__) . '/../swoosh',
+-    'webroot' => $this->applications['horde']['webroot'] . '/swoosh',
+-    'name' => _("SMS Messaging"),
+-    'status' => 'inactive',
+-    'provides' => 'sms',
+-    'menu_parent' => 'website'
+-);
+-
