@@ -1,4 +1,4 @@
-# $Id: e-smith-horde.spec,v 1.7 2008/06/26 04:29:33 slords Exp $
+# $Id: e-smith-horde.spec,v 1.8 2008/09/16 18:04:56 bytegw Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
@@ -51,7 +51,7 @@ Obsoletes: smeserver-horde-menuarray
 
 %changelog
 * Tue Jun 24 2008 John H. Bennett III <bennettj@johnbennettservices.com> 3.2-2
-- Upgrade patch for Horde 3.2.1
+- Upgrade patch for Horde 3.2.1 [SME: 4532]
 
 * Mon Jun 2 2008 John H. Bennett III <bennettj@johnbennettservices.com> 3.2-1
 - Initial production build
