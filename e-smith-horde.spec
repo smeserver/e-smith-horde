@@ -1,16 +1,15 @@
-# $Id: e-smith-horde.spec,v 1.7 2008/09/16 18:04:56 bytegw Exp $
+# $Id: e-smith-horde.spec,v 1.8 2008/10/07 18:23:44 slords Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
-%define version 3.2
-%define release 2
+%define version 4.0.0
+%define release 1
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
-Patch1: e-smith-horde-3.2.1-header.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -23,33 +22,21 @@ Requires: wv
 Requires: xlhtml
 Requires: horde >= 3.2
 Requires: php-pear
-%if "%{?rhel}" == "5"
-Obsoletes: pear-date
-Obsoletes: pear-db
-Obsoletes: pear-file
-Obsoletes: pear-log
-Obsoletes: pear-mail
-Obsoletes: pear-mail_mime
-Requires: php-pear(Date)
-Requires: php-pear(File)
-Requires: php-pear(HTTP)
-Requires: php-pear(Log)
-Requires: php-pear(Services_Weather)
-Requires: php-pecl(Fileinfo)
-%else
 Requires: pear-date
 Requires: pear-db
 Requires: pear-file
 Requires: pear-log
 Requires: pear-mail
 Requires: pear-mail_mime
-%endif
 BuildRequires: e-smith-devtools >= 1.13.1-03
 AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Tue Oct 7 2008 Shad L. Lords <slords@mail.com> 4.0.0-1.sme
+- Roll new stream to separate sme7/sme8 trees [SME: 4633]
+
 * Tue Jun 24 2008 John H. Bennett III <bennettj@johnbennettservices.com> 3.2-2
 - Upgrade patch for Horde 3.2.1 [SME: 4532]
 
@@ -63,7 +50,6 @@ so that Horde will work properly on SME Server
 
 %prep
 %setup
-%patch1 -p1
 
 %build
 for i in post-install post-upgrade
