@@ -1,0 +1,212 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/db/configuration/migrate/HordeSecret mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/db/configuration/migrate/HordeSecret
+--- e-smith-horde-3.2/root/etc/e-smith/db/configuration/migrate/HordeSecret	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/db/configuration/migrate/HordeSecret	2008-10-04 14:01:26.000000000 -0500
+@@ -0,0 +1,32 @@
++{
++    my $horderec = $DB->get('horde')
++	|| $DB->new_record('horde', {type => 'service'});
++    my $horde_secret = $horderec->prop('SecretKey');
++    if (not $horde_secret or length($horde_secret) < 57)
++    {
++	use MIME::Base64 qw(encode_base64);
++
++	$horde_secret = "not set due to error";
++	if ( open( RANDOM, "/dev/urandom" ) )
++	{
++	    my $buf;
++	    # 57 bytes is a full line of Base64 coding, and contains
++	    # 456 bits of randomness - given a perfectly random /dev/random
++	    if ( read( RANDOM, $buf, 57 ) != 57 )
++	    {
++		warn("Short read from /dev/random: $!");
++	    }
++	    else
++	    {
++		$horde_secret = encode_base64($buf);
++		chomp $horde_secret;
++	    }
++	    close RANDOM;
++	}
++	else
++	{
++	    warn "Could not open /dev/urandom: $!";
++	}
++	$horderec->set_prop('SecretKey', $horde_secret);
++    }
++}
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2008-10-04 14:35:08.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2008-10-04 13:38:33.000000000 -0500
+@@ -1,4 +1,4 @@
+ //00header
+ /* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
+-// $Horde: horde/config/conf.xml,v 1.74.2.69 2008/06/05 09:05:50 jan Exp $
++// $Horde: horde/config/conf.xml,v 1.74.2.78 2008/09/12 10:01:41 jan Exp $
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2008-04-17 23:11:38.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2008-10-04 14:04:42.000000000 -0500
+@@ -3,10 +3,18 @@
+ $conf['debug_level'] = E_ALL;
+ $conf['max_exec_time'] = 0;
+ $conf['compress_pages'] = true;
++{
++    $horderec = $DB->get('horde');
++    $horde_secret = $horderec->prop('SecretKey') || 'horde';
++    return '';
++}
++$conf['secret_key'] = '{$horde_secret}';
+ $conf['umask'] = 077;
+ $conf['use_ssl'] = 2;
+ $conf['server']['name'] = $_SERVER['SERVER_NAME'];
+ $conf['server']['port'] = $_SERVER['SERVER_PORT'];
++$conf['urls']['token_lifetime'] = 30;
++$conf['urls']['hmac_lifetime'] = 30;
+ $conf['urls']['pretty'] = false;
+ $conf['safe_ips'] = array();
+ $conf['session']['name'] = 'Horde';
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/210CacheSystem mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/210CacheSystem
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/210CacheSystem	2008-05-26 17:18:43.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/210CacheSystem	2008-10-04 14:26:19.000000000 -0500
+@@ -1,7 +1,6 @@
+ //210CacheSystem
+ $conf['cache']['default_lifetime'] = 1800;
++$conf['cache']['driver'] = 'file';
+ $conf['cache']['params']['dir'] = Horde::getTempDir();
+ $conf['cache']['params']['sub'] = 0;
+-$conf['cache']['driver'] = 'file';
+-$conf['token']['driver'] = 'none';
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	2008-04-17 23:15:56.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	2008-10-04 13:21:09.000000000 -0500
+@@ -1,6 +1,6 @@
+ // 00header
+ /**
+- * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.10 2007/12/20 15:01:22 jan Exp $
++ * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.12 2008/07/07 16:24:24 jan Exp $
+  *
+  * Decide which output drivers you want to activate for all Horde
+  * applications. Individual Horde applications can override these settings
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/136smil mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/136smil
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/136smil	2008-04-17 23:27:50.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/136smil	2008-10-04 13:24:43.000000000 -0500
+@@ -1,6 +1,5 @@
+ // 135smil
+ /**  
+-/**  
+  * Default smil driver settings
+  */
+ $mime_drivers['horde']['smil'] = array(
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard	2008-04-17 23:42:11.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/280vcard	2008-10-04 13:28:25.000000000 -0500
+@@ -4,7 +4,7 @@
+  */
+ $mime_drivers['horde']['vcard'] = array(
+     'handles' => array(
+-        'text/x-vcard', 'text/x-vcalendar'
++        'text/vcard', 'text/x-vcard', 'text/directory'
+     ),
+     'icons' => array(
+         'default' => 'vcard.png'
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header	2008-10-04 14:35:08.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/00header	2008-10-04 12:45:34.000000000 -0500
+@@ -2,7 +2,7 @@
+ /**
+  * registry.php -- Horde application registry.
+  *
+- * $Horde: horde/config/registry.php.dist,v 1.255.2.25 2008/05/25 21:39:05 chuck Exp $
++ * $Horde: horde/config/registry.php.dist,v 1.255.2.26 2008/07/07 12:17:08 jan Exp $
+  *
+  * This configuration file is used by Horde to determine which Horde
+  * applications are installed and where, as well as how they interact.
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/795AppRegistryNic mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/795AppRegistryNic
+--- e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/795AppRegistryNic	2008-04-19 08:16:27.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/795AppRegistryNic	2008-10-04 12:53:33.000000000 -0500
+@@ -1,4 +1,4 @@
+-// 360AppRegistryNic
++// 795AppRegistryNic
+ $this->applications['nic'] = array(
+     'fileroot' => dirname(__FILE__) . '/../nic',
+     'webroot' => $this->applications['horde']['webroot'] . '/nic',
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql mezzanine_patched_e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql
+--- e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql	2008-06-07 21:26:55.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql	2008-10-04 12:40:47.000000000 -0500
+@@ -1,4 +1,4 @@
+--- $Horde: horde/scripts/sql/create.mysql.sql,v 1.4.6.20 2008/05/16 21:42:04 bklang Exp $
++-- $Horde: horde/scripts/sql/create.mysql.sql,v 1.4.6.22 2008/08/13 20:18:03 chuck Exp $
+ 
+ CREATE DATABASE IF NOT EXISTS horde;
+ 
+@@ -13,6 +13,16 @@
+     PRIMARY KEY (user_uid)
+ );
+ 
++CREATE TABLE horde_signups (
++    user_name VARCHAR(255) NOT NULL,   
++    signup_date VARCHAR(255) NOT NULL, 
++    signup_host VARCHAR(255) NOT NULL, 
++    signup_email VARCHAR(255) NOT NULL,
++    signup_data TEXT NOT NULL,
++    UNIQUE KEY user_name (user_name),
++    UNIQUE KEY signup_email (signup_email)
++);
++
+ CREATE TABLE IF NOT EXISTS horde_groups (
+     group_uid INT(10) UNSIGNED NOT NULL,
+     group_name VARCHAR(255) NOT NULL,
+@@ -74,8 +84,8 @@
+ );
+ 
+ CREATE TABLE IF NOT EXISTS horde_vfs (
+-    vfs_id        BIGINT NOT NULL,
+-    vfs_type      SMALLINT NOT NULL,
++    vfs_id        INT UNSIGNED NOT NULL,
++    vfs_type      SMALLINT UNSIGNED NOT NULL,
+     vfs_path      VARCHAR(255) NOT NULL,
+     vfs_name      VARCHAR(255) NOT NULL,
+     vfs_modified  BIGINT NOT NULL,
+@@ -86,7 +96,7 @@
+ );
+ 
+ CREATE TABLE IF NOT EXISTS horde_histories (
+-    history_id       BIGINT NOT NULL,
++    history_id       INT UNSIGNED NOT NULL,
+     object_uid       VARCHAR(255) NOT NULL,
+     history_action   VARCHAR(32) NOT NULL,
+     history_ts       BIGINT NOT NULL,
+@@ -99,7 +109,7 @@
+ 
+ CREATE TABLE IF NOT EXISTS horde_sessionhandler (
+     session_id             VARCHAR(32) NOT NULL,
+-    session_lastmodified   INT NOT NULL,
++    session_lastmodified   BIGINT NOT NULL,
+     session_data           LONGBLOB,
+ 
+     PRIMARY KEY (session_id)
+@@ -153,10 +163,9 @@
+     lock_origin_timestamp    BIGINT NOT NULL,
+     lock_update_timestamp    BIGINT NOT NULL,
+     lock_expiry_timestamp    BIGINT NOT NULL,
+-    lock_type                TINYINT NOT NULL,
++    lock_type                TINYINT UNSIGNED NOT NULL,
+ 
+     PRIMARY KEY (lock_id)
+-    
+ );
+
+
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql mezzanine_patched_e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql
+--- e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql	2008-10-17 18:01:52.000000000 -0500
++++ mezzanine_patched_e-smith-horde-3.2/root/home/httpd/html/horde/smeserver/horde_mysql_create_tables.sql	2008-10-17 17:59:55.000000000 -0500
+@@ -13,7 +13,7 @@
+     PRIMARY KEY (user_uid)
+ );
+ 
+-CREATE TABLE horde_signups (
++CREATE TABLE IF NOT EXISTS horde_signups (
+     user_name VARCHAR(255) NOT NULL,   
+     signup_date VARCHAR(255) NOT NULL, 
+     signup_host VARCHAR(255) NOT NULL, 
