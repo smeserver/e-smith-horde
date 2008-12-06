@@ -1,15 +1,16 @@
-# $Id: e-smith-horde.spec,v 1.9 2008/10/07 18:23:44 slords Exp $
+# $Id: e-smith-horde.spec,v 1.10 2008/12/06 21:22:50 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.2.0
-%define release 1
+%define release 2
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
+Patch1: e-smith-horde_3.3-upgrade.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -40,6 +41,9 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Sat Dec 06 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-2       
+- Upgrade to horde templates to reflect changes in Horde 3.3  [SME: 4831]
+
 * Tue Oct 7 2008 Shad L. Lords <slords@mail.com> 4.2.0-1.sme
 - Roll new stream to separate sme7/sme8 trees [SME: 4633]
 
@@ -56,6 +60,8 @@ so that Horde will work properly on SME Server
 
 %prep
 %setup
+
+%patch1 -p1
 
 %build
 for i in post-install post-upgrade
