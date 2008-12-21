@@ -1,0 +1,25 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2008-12-20 23:26:51.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2008-12-20 23:21:35.000000000 -0600
+@@ -21,6 +21,6 @@
+ $conf['session']['use_only_cookies'] = true;
+ $conf['session']['cache_limiter'] = 'nocache';
+ $conf['session']['timeout'] = 0;
+-$conf['cookie']['domain'] = $_SERVER['SERVER_NAME'];
++$conf['cookie']['domain'] = '';
+ $conf['cookie']['path'] = '/horde';
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryKlutz mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryKlutz
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryKlutz	2008-04-17 22:23:11.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/410AppRegistryKlutz	1969-12-31 18:00:00.000000000 -0600
+@@ -1,10 +0,0 @@
+-// 410AppRegistryKlutz
+-$this->applications['klutz'] = array(
+-    'fileroot' => dirname(__FILE__) . '/../klutz',
+-    'webroot' => $this->applications['horde']['webroot'] . '/klutz',
+-    'name' => _("Comics"),
+-    'status' => 'inactive',
+-    'provides' => 'comics',
+-    'menu_parent' => 'info'
+-);
+-
