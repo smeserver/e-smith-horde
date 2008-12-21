@@ -1,0 +1,20 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2008-12-13 18:08:03.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2008-12-13 17:29:08.000000000 -0600
+@@ -1,4 +1,4 @@
+ //00header
+ /* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
+-// $Horde: horde/config/conf.xml,v 1.74.2.78 2008/09/12 10:01:41 jan Exp $
++// $Horde: horde/config/conf.xml,v 1.74.2.81 2008/11/27 05:29:45 chuck Exp $
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2008-12-13 18:08:03.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2008-12-13 17:46:06.000000000 -0600
+@@ -1,6 +1,6 @@
+ //100GeneralSettings
+ $conf['vhosts'] = false;
+-$conf['debug_level'] = E_ALL;
++$conf['debug_level'] = E_ALL & ~E_NOTICE;
+ $conf['max_exec_time'] = 0;
+ $conf['compress_pages'] = true;
+ {

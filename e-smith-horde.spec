@@ -1,16 +1,18 @@
-# $Id: e-smith-horde.spec,v 1.9 2008/12/06 21:22:46 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.10 2008/12/21 05:47:02 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.0.0
-%define release 2
+%define release 4
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
 Group: Networking/Daemons
 Source: %{name}-%{version}.tar.gz
 Patch1: e-smith-horde_3.3-upgrade.patch
+Patch2: e-smith-horde_3.3.2-upgrade.patch
+Patch3: e-smith-horde_cookie_domain.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -35,6 +37,13 @@ Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
 
 %changelog
+* Sat Dec 20 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.0.0-4
+- Patch to conf.php template to set a blank cookie domain so that FQDN and non-FQDN
+- access to webmail will work. Remove klutz template from registry.php [SME: 4787]
+
+* Sat Dec 06 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.0.0-3
+- Upgrade to horde templates to reflect changes in Horde 3.3.2
+
 * Sat Dec 06 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.0.0-2
 - Upgrade to horde templates to reflect changes in Horde 3.3  [SME: 4831]
 
@@ -56,6 +65,8 @@ so that Horde will work properly on SME Server
 %setup
 
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 for i in post-install post-upgrade
