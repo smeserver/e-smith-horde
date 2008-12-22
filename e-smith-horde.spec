@@ -1,10 +1,10 @@
-# $Id: e-smith-horde.spec,v 1.10 2008/12/21 05:47:02 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.11 2008/12/22 00:58:43 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.0.0
-%define release 4
+%define release 5
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -35,8 +35,12 @@ BuildRequires: e-smith-devtools >= 1.13.1-03
 AutoReqProv: no
 Obsoletes: dcb-e-smith-horde
 Obsoletes: smeserver-horde-menuarray
+Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
+* Sun Dec 21 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.0.0-5
+- Update to Spec file to obsolete smeserver-trean < 0.1-8  [SME: 4860]
+
 * Sat Dec 20 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.0.0-4
 - Patch to conf.php template to set a blank cookie domain so that FQDN and non-FQDN
 - access to webmail will work. Remove klutz template from registry.php [SME: 4787]
