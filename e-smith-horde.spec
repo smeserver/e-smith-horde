@@ -1,4 +1,4 @@
-# $Id: e-smith-horde.spec,v 1.12 2008/12/22 00:59:37 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.13 2008/12/24 22:59:57 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
@@ -31,11 +31,9 @@ Obsoletes: pear-file
 Obsoletes: pear-log
 Obsoletes: pear-mail
 Obsoletes: pear-mail_mime
-Obsoletes: php-pear-HTTP-Request  
 Requires: php-pear(Date)
 Requires: php-pear(File)
 Requires: php-pear(HTTP)
-Requires: php-pear(HTTP-Request)
 Requires: php-pear(Log)
 Requires: php-pear(Services_Weather)
 Requires: php-pecl(Fileinfo)
@@ -46,6 +44,10 @@ Obsoletes: smeserver-horde-menuarray
 Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
+* Thu Dec 24 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-6
+- Updated spec file to remove requires and obsoletes of php-pear-HTTP-Request
+  information moved to e-smith-imp for both sme7 and sme8 [SME: 4821]
+
 * Sun Dec 21 2008 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-5
 - Update to Spec file to obsolete smeserver-trean < 0.1-8  [SME: 4860]
 
