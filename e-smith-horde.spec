@@ -1,10 +1,10 @@
-# $Id: e-smith-horde.spec,v 1.13 2008/12/24 22:59:57 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.14 2008/12/24 23:00:37 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.2.0
-%define release 5
+%define release 6
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
