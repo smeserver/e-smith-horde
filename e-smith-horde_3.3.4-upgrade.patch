@@ -1,0 +1,40 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade
+--- e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade	2008-06-03 23:04:29.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade	2009-05-02 19:08:06.000000000 -0500
+@@ -64,6 +64,10 @@
+ $sth_horde_histories->execute;
+ my $horde_histories = $sth_horde_histories->fetchall_hashref('Field');
+ 
++my $sth_horde_sessionhandler = $db_hordehandle->prepare("show columns from horde_sessionhandler");
++$sth_horde_sessionhandler->execute;
++my $horde_sessionhandler = $sth_horde_sessionhandler->fetchall_hashref('Field');
++
+ my $sth_horde_syncml_map = $db_hordehandle->prepare("show columns from horde_syncml_map");
+ $sth_horde_syncml_map->execute;
+ my $horde_syncml_map = $sth_horde_syncml_map->fetchall_hashref('Field');
+@@ -311,6 +315,16 @@
+     $statement->execute or die "execute: $$statement: $DBI::errstr";
+ }
+ 
++# Create an index for session_lastmodified if needed
++unless ($horde_sessionhandler->{session_lastmodified}->{Key})
++{
++    my $statement = 'alter table horde_sessionhandler ' .
++                    'add index session_lastmodified_idx (session_lastmodified)';
++    $statement = $db_hordehandle->prepare($statement) or 
++        die "prepare: $$statement: $DBI::errstr";
++    $statement->execute or die "execute: $$statement: $DBI::errstr";
++}
++
+ # Create an index for syncml_syncpartner if needed
+ unless ($horde_syncml_map->{syncml_syncpartner}->{Key})
+ {
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2009-05-02 19:10:28.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2009-05-02 18:38:56.000000000 -0500
+@@ -1,4 +1,4 @@
+ //00header
+ /* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
+-// $Horde: horde/config/conf.xml,v 1.74.2.81 2008/11/27 05:29:45 chuck Exp $
++// $Horde: horde/config/conf.xml,v 1.74.2.84 2009/04/04 12:30:51 jan Exp $
+ 
