@@ -1,10 +1,10 @@
-# $Id: e-smith-horde.spec,v 1.15 2009/06/22 01:53:06 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.16 2009/10/14 02:19:12 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.2.0
-%define release 7
+%define release 8
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -45,6 +45,9 @@ Obsoletes: smeserver-horde-menuarray
 Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
+* Tue Oct 13 2009 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-8  
+- Upgrade horde templates to reflect changes in Horde 3.3.5 [SME: 5509]   
+
 * Sat Jun 20 2009 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-7
 - Upgrade to horde templates to reflect changes in Horde 3.3.4 [SME: 5372]
 
