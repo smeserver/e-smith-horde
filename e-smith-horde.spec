@@ -1,10 +1,10 @@
-# $Id: e-smith-horde.spec,v 1.16 2009/10/14 02:19:12 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.17 2009/10/14 02:35:16 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.2.0
-%define release 8
+%define release 9
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -14,6 +14,7 @@ Patch1: e-smith-horde_3.3-upgrade.patch
 Patch2: e-smith-horde_3.3.2-upgrade.patch
 Patch3: e-smith-horde_cookie_domain.patch
 Patch4: e-smith-horde_3.3.4-upgrade.patch
+Patch5: e-smith-horde_3.3.5-upgrade.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -45,6 +46,9 @@ Obsoletes: smeserver-horde-menuarray
 Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
+* Tue Oct 13 2009 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-9
+- Really apply patch from previous attempt
+
 * Tue Oct 13 2009 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-8  
 - Upgrade horde templates to reflect changes in Horde 3.3.5 [SME: 5509]   
 
@@ -89,6 +93,7 @@ so that Horde will work properly on SME Server
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 for i in post-install post-upgrade
