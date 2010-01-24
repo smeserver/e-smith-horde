@@ -1,0 +1,117 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/createlinks mezzanine_patched_e-smith-horde-4.0.0/createlinks
+--- e-smith-horde-4.0.0/createlinks	2008-06-08 22:51:18.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/createlinks	2010-01-16 10:19:57.000000000 -0600
+@@ -4,7 +4,7 @@
+ 
+ # conf-horde
+ 
+-foreach (qw(conf.php prefs.php registry.php mime_drivers.php))
++foreach (qw(conf.php prefs.php registry.php mime_drivers.php hooks.php))
+ {
+     templates2events("/home/httpd/html/horde/config/$_", qw(
+ 	    bootstrap-console-save
+@@ -24,7 +24,7 @@
+             ));
+ }
+ 
+-foreach (qw(registry.php prefs.php mime_drivers.php))
++foreach (qw(conf.php registry.php prefs.php mime_drivers.php hooks.php))
+ {
+     safe_symlink("/etc/e-smith/templates-default/template-begin-php",
+ 	"root/etc/e-smith/templates/home/httpd/html/horde/config/$_/template-begin");
+@@ -73,6 +73,3 @@
+     templates2events("/etc/e-smith/sql/init/$_", $event);
+ }
+ 
+-safe_symlink("/etc/e-smith/templates-default/template-begin-php",
+-     "root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/template-begin");
+-
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks	2008-04-17 23:13:02.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/320Hooks	2010-01-16 10:10:34.000000000 -0600
+@@ -1,6 +1,6 @@
+ //320Hooks
+ $conf['hooks']['permsdenied'] = false;
+-$conf['hooks']['username'] = false;
++$conf['hooks']['username'] = true;
+ $conf['hooks']['preauthenticate'] = false;
+ $conf['hooks']['postauthenticate'] = false;
+ $conf['hooks']['authldap'] = false;
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/00Header mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/00Header
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/00Header	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/00Header	2010-01-16 10:16:14.000000000 -0600
+@@ -0,0 +1,49 @@
++//00Header
++/**
++ * Horde Hooks configuration file.
++ *
++ * THE HOOKS PROVIDED IN THIS FILE ARE EXAMPLES ONLY.  DO NOT ENABLE THEM
++ * BLINDLY IF YOU DO NOT KNOW WHAT YOU ARE DOING.  YOU HAVE TO CUSTOMIZE THEM
++ * TO MATCH YOUR SPECIFIC NEEDS AND SYSTEM ENVIRONMENT.
++ *
++ * This file is where you define any hooks, for preferences or general Horde
++ * use, that your installation uses. The functions in this file can vastly
++ * change how your installation behaves, so make sure to test out any changes
++ * here before doing them in a production environment.
++ *
++ * Hook function names are automatically determined. The format of the name
++ * is:
++ *
++ * _<type of hook>_hook_<name of hook>.
++ *
++ * Types of hooks that are defined in this file are 'prefs' (hooks to set the
++ * value of preferences), 'horde' (hooks for the Horde Framework scripts) and
++ * 'app' (where app is any Horde application name, like 'imp') hooks that are
++ * application specific.
++ *
++ * So, a hook to set the preference 'theme' would be named
++ * "_prefs_hook_theme".
++ *
++ * NOTE 1: Having a hook function in this file does NOT mean that the hook
++ * will automatically be used. YOU MUST enable the hook. For preferences, set
++ * 'hook' => true in that preferences attributes; for other hooks, there will
++ * be a configuration option in each application's conf.php file such as
++ * $conf['hooks']['hookname'] which must be set to true.
++ *
++ * NOTE 2: Preferences hooks are ONLY executed on login. Preferences are
++ * cached during a users session and, to avoid unnecessary overhead every time
++ * a preference is accessed, the results of hooks are cached as well. This
++ * leads to ...
++ *
++ * NOTE 3: Any preference that is NOT LOCKED, that is set by a hook, WILL BE
++ * SAVED WITH THAT VALUE. This means several things:
++ * 1) Users will get the results of the hook set for them in their
++ *    preferences.
++ * 2) By virtue of this, the next time they log in and load their
++ *    preferences, the hook will NOT be called, because in their last session,
++ *    we saved the results of the hook for them. However, if the preference is
++ *    locked, the result of the hook will never be saved.
++ *
++ * $Horde: horde/config/hooks.php.dist,v 1.73.6.19 2009-08-13 15:43:56 jan Exp $
++ */
++
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/100Username mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/100Username
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/100Username	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/hooks.php/100Username	2010-01-16 10:14:34.000000000 -0600
+@@ -0,0 +1,15 @@
++//100Username
++// Here is an example _username_hook_frombackend function. It converts the user
++// name to all lower case. This might be necessary if an authentication backend
++// is case insensitive to take into account that Horde's preference system is
++// case sensitive.
++//   
++// ex. $userID = 'MyName' returns: 'myname'
++
++if (!function_exists('_username_hook_frombackend')) \{
++    function _username_hook_frombackend($userID)
++    \{
++        return String::lower($userID);
++    \}
++\}  
++
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/hooks.php mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/hooks.php
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/hooks.php	1969-12-31 18:00:00.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates.metadata/home/httpd/html/horde/config/hooks.php	2010-01-16 10:17:15.000000000 -0600
+@@ -0,0 +1,2 @@
++PERMS=0640
++GID="www"
