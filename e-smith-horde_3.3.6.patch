@@ -1,0 +1,39 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade
+--- e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade	2010-01-02 15:48:22.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/events/actions/horde_upgrade	2009-12-28 12:25:01.000000000 -0600
+@@ -51,6 +51,10 @@
+     "ALTER TABLE horde_datatree_attributes CHANGE COLUMN datatree_id datatree_id INT(11) UNSIGNED NOT NULL",
+     "ALTER TABLE horde_vfs CHANGE COLUMN vfs_id vfs_id INT(11) UNSIGNED NOT NULL",
+     "ALTER TABLE horde_prefs CHANGE COLUMN pref_uid pref_uid VARCHAR(200) NOT NULL",
++    "ALTER TABLE horde_tokens CHANGE COLUMN token_address token_address VARCHAR(100) NOT NULL",
++    "ALTER TABLE horde_histories CHANGE COLUMN history_id history_id INT UNSIGNED NOT NULL",
++    "ALTER TABLE horde_sessionhandler CHANGE COLUMN session_lastmodified session_lastmodified BIGINT NOT NULL",
++    "ALTER TABLE horde_locks CHANGE COLUMN lock_type lock_type TINYINT UNSIGNED NOT NULL",
+     "DELETE FROM horde_prefs WHERE pref_name = 'last_login' AND pref_scope = 'imp'",
+ );
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	2010-01-02 15:48:22.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/mime_drivers.php/00header	2009-12-28 11:33:36.000000000 -0600
+@@ -1,6 +1,6 @@
+ // 00header
+ /**
+- * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.13 2009/05/29 05:59:25 slusarz Exp $
++ * $Horde: horde/config/mime_drivers.php.dist,v 1.97.6.14 2009-11-24 19:53:30 slusarz Exp $
+  *
+  * Decide which output drivers you want to activate for all Horde
+  * applications. Individual Horde applications can override these settings
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel	2006-03-15 17:51:23.000000000 -0600
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/registry.php/760AppRegistryAnsel	1969-12-31 18:00:00.000000000 -0600
+@@ -1,10 +0,0 @@
+-// 760AppRegistryAnsel
+-$this->applications['ansel'] = array(
+-    'fileroot' => dirname(__FILE__) . '/../ansel',
+-    'webroot' => $this->applications['horde']['webroot'] . '/ansel',
+-    'name' => _("Photos"),
+-    'status' => 'inactive',
+-    'provides' => 'images',
+-    'menu_parent' => 'website'
+-);
+-
