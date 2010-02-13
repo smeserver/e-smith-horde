@@ -1,4 +1,4 @@
-# $Id: e-smith-horde.spec,v 1.17 2009/10/14 02:35:16 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.18 2010/02/13 02:51:06 dungog Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
@@ -47,7 +47,7 @@ Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
 * Tue Oct 13 2009 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-9
-- Really apply patch from previous attempt
+- Really apply patch from previous attempt [SME: 5509]
 
 * Tue Oct 13 2009 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-8  
 - Upgrade horde templates to reflect changes in Horde 3.3.5 [SME: 5509]   
