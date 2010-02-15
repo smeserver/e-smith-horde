@@ -1,10 +1,10 @@
-# $Id: e-smith-horde.spec,v 1.20 2010/02/13 09:27:51 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.21 2010/02/15 04:53:31 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.2.0
-%define release 11
+%define release 12
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -17,6 +17,7 @@ Patch4: e-smith-horde_3.3.4-upgrade.patch
 Patch5: e-smith-horde_3.3.5-upgrade.patch
 Patch6: e-smith-horde_3.3.6.patch
 Patch7: e-smith-horde_username.hook.patch
+Patch8: e-smith-horde_mime_drivers.php.patch
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -48,6 +49,15 @@ Obsoletes: smeserver-horde-menuarray
 Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
+* Sun Feb 14 2010 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-12
+- Patch to change horde's templated mime_drivers.php file so some additional
+  settings can be customized [SME: 5224]
+- config setprop horde inlineMSWord true|false <-- default is false
+- config setprop horde inlineMSExcel true|false <-- default is false
+- config setprop horde inlineMSPowerpoint true|false <-- default is false
+- config setprop horde inlineWordperfect true|false <-- default is false
+- config setprop horde inlineAudio true|false <-- default is true
+
 * Sat Feb 13 2010 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-11
 - Patch to make sure username is always saved in lowercase to horde db's [SME:5775]
 
@@ -104,6 +114,7 @@ so that Horde will work properly on SME Server
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 for i in post-install post-upgrade
