@@ -1,0 +1,22 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header mezzanine_patched_e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+--- e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2010-04-27 21:48:17.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2010-04-27 21:42:08.000000000 -0500
+@@ -1,4 +1,4 @@
+ //00header
+ /* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
+-// $Horde: horde/config/conf.xml,v 1.74.2.88 2009/09/02 08:21:46 jan Exp $
++// $Horde: horde/config/conf.xml,v 1.74.2.89 2010/04/21 08:02:24 jan Exp $
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/330PortalBlock mezzanine_patched_e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/330PortalBlock
+--- e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/330PortalBlock	2010-05-01 08:07:07.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/330PortalBlock	2010-05-01 08:06:29.000000000 -0500
+@@ -1,7 +1,7 @@
+ //330PortalBlock
+ $conf['portal']['fixed_blocks'] = array();
+-$conf['weatherdotcom']['license_key'] = '{ $horde{weatherdotcompartnerid} }';
+-$conf['weatherdotcom']['partner_id'] = '{ $horde{weatherdotcomlicensekey} }';
++$conf['weatherdotcom']['license_key'] = '{ $horde{weatherdotcomlicensekey} }';
++$conf['weatherdotcom']['partner_id'] = '{ $horde{weatherdotcompartnerid} }';
+ $conf['accounts']['params']['quota_path'] = '/usr/bin/quota';
+ $conf['accounts']['params']['grep_path'] = '/bin/grep';
+ $conf['accounts']['params']['translateMountPoint'] = false;
