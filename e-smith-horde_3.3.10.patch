@@ -1,0 +1,34 @@
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2010-11-05 21:56:30.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/00header	2010-11-05 21:42:39.000000000 -0500
+@@ -1,4 +1,4 @@
+ //00header
+ /* CONFIG START. DO NOT CHANGE ANYTHING IN OR AFTER THIS LINE. */
+-// $Horde: horde/config/conf.xml,v 1.74.2.89 2010/04/21 08:02:24 jan Exp $
++// $Horde: horde/config/conf.xml,v 1.74.2.90 2010-06-13 18:01:36 mrubinsk Exp $
+ 
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings
+--- e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2010-11-05 21:56:30.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.0.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/100GeneralSettings	2010-11-05 21:48:04.000000000 -0500
+@@ -1,6 +1,9 @@
+ //100GeneralSettings
+ $conf['vhosts'] = false;
+ $conf['debug_level'] = E_ALL & ~E_NOTICE;
++if (defined('E_DEPRECATED')) \{
++   $conf['debug_level'] &= ~E_DEPRECATED;
++\}
+ $conf['max_exec_time'] = 0;
+ $conf['compress_pages'] = true;
+ {
+
+diff -Nur -x '*.orig' -x '*.rej' e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/180DatatreeSystem mezzanine_patched_e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/180DatatreeSystem
+--- e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/180DatatreeSystem	2010-11-05 21:56:30.000000000 -0500
++++ mezzanine_patched_e-smith-horde-4.2.0/root/etc/e-smith/templates/home/httpd/html/horde/config/conf.php/180DatatreeSystem	2010-11-05 21:56:30.000000000 -0500
+@@ -3,5 +3,4 @@
+ $conf['datatree']['params']['table_attributes'] = 'horde_datatree_attributes';
+ $conf['datatree']['params']['driverconfig'] = 'horde';
+ $conf['datatree']['driver'] = 'sql';
+-$conf['group']['driver'] = 'datatree';
+
+ 
+ 

@@ -1,10 +1,10 @@
-# $Id: e-smith-horde.spec,v 1.22 2010/05/11 04:07:35 mrjhb3 Exp $
+# $Id: e-smith-horde.spec,v 1.23 2010/11/08 03:54:17 mrjhb3 Exp $
 
 Summary: e-smith specific Horde configuration and templates.
 %define name e-smith-horde
 Name: %{name}
 %define version 4.2.0
-%define release 13
+%define release 14
 Version: %{version}
 Release: %{release}%{?dist}
 License: GPL
@@ -19,6 +19,7 @@ Patch6: e-smith-horde_3.3.6.patch
 Patch7: e-smith-horde_username.hook.patch
 Patch8: e-smith-horde_mime_drivers.php.patch
 Patch9: e-smith-horde_3.3.8.patch
+Patch10: e-smith-horde_3.3.10.patch 
 BuildRoot: /var/tmp/%{name}-%{version}-%{release}-buildroot
 BuildArchitectures: noarch
 Requires: e-smith-base >= 4.9.44, horde >= 2.0, mysql
@@ -50,6 +51,9 @@ Obsoletes: smeserver-horde-menuarray
 Obsoletes: smeserver-trean < 0.1-8
 
 %changelog
+* Sun Nov 07 2010 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-14
+- Upgrade horde templates to reflect changes in Horde 3.3.10 [SME:6348]
+
 * Mon May 10 2010 John H. Bennett III <bennettj@johnbennettservices.com> 4.2.0-13
 - Upgrade horde templates to reflect changes in Horde 3.3.8 [SME: 5938]
 
@@ -120,6 +124,7 @@ so that Horde will work properly on SME Server
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 for i in post-install post-upgrade
